@@ -6,9 +6,9 @@ type Props = {};
 
 export const NavBar = (props: Props) => {
   return (
-    <SafeAreaView className="bg-gray-800">
-      <View className="py-2 px-4 bg-gray-800">
-        <Text className="text-2xl text-bl">NavBar</Text>
+    <SafeAreaView className="bg-gray-800 ">
+      <View className="py-2 px-4 bg-gray-800 border-b border-white">
+        <Text className="text-2xl text-gray-50 font-medium">NavBar</Text>
       </View>
     </SafeAreaView>
   );
