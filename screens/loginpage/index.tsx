@@ -8,7 +8,7 @@ export function LoginPage() {
     <View className={styles.container}>
       <Text className="text-xl">Login to Admin Account</Text>
       <TouchableOpacity
-        onPress={() => navigation.navigate("GenerateOtp")}
+        onPress={() => navigation.navigate("QuickLinks")}
         className={styles.button}
       >
         <Text className="text-3xl">Login</Text>

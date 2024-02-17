@@ -9,7 +9,7 @@ export function GenerateOtpScreen() {
     // console.log("jjj");
     try {
       const res = await fetch(
-        `http://localhost:3000/admin/get-otp?admin_id=${admin_id}`
+        `http://192.168.100.16:3000/admin/get-otp?admin_id=${admin_id}`
       );
       const data = await res.json();
       const { otp } = data;
