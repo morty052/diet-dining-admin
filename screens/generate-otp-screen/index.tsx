@@ -19,7 +19,8 @@ export function GenerateOtpScreen() {
       setLoading(true);
       const res = await fetch(
         // `http://192.168.100.16:3000/admin/get-otp?admin_id=${admin_id}`
-        `http://localhost:3000/admin/get-otp?admin_id=${admin_id}`
+        // `http://localhost:3000/admin/get-otp?admin_id=${admin_id}`
+        `https://diet-dining-server.onrender.com/admin/get-otp?admin_id=${admin_id}`
       );
       const data = await res.json();
       const { otp } = data;

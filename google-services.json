@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "520702767119",
+    "project_id": "diet-dining-companion",
+    "storage_bucket": "diet-dining-companion.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:520702767119:android:c2e9d350e34a83a412b37a",
+        "android_client_info": {
+          "package_name": "com.abdulojehumen.dietdiningadmin"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyADrLybwbs_NuvGa7v1-p_SD_Gb7Opg_wg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
