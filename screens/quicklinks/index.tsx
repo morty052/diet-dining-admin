@@ -10,6 +10,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import Colors from "../../constants/colors";
 import { deleteKey } from "../../utils/secureStore";
+import { getItem, removeItem } from "../../utils/storage";
 
 type QuickLinkProps = {
   title: string;
@@ -40,27 +41,45 @@ const quickLinksArray = [
   },
   {
     link: "IdentifyMealScreen",
-    icon: "notifications-outline",
+    icon: "cloud-outline",
     title: "Genie",
   },
 ];
 
-const QuickLink = ({ title, icon, onPress }: QuickLinkProps) => {
-  return (
-    <TouchableOpacity
-      onPress={onPress}
-      className=" border h-28 w-40 border-gray-50 px-2  mb-4 rounded-xl items-center justify-center"
-    >
-      <Ionicons name={icon as any} size={40} color="white" />
-      <Text className="text-[16px] font-medium text-white">{title}</Text>
-    </TouchableOpacity>
-  );
-};
+const affiliateLinksArray = [
+  {
+    link: "GenerateOtp",
+    icon: "lock-closed-outline",
+    title: "Generate OTP",
+  },
+  {
+    link: "AffiliateStoreManager",
+    icon: "storefront-outline",
+    title: "Manage Store",
+  },
+  {
+    link: "OrdersManager",
+    icon: "bag-outline",
+    title: "Manage Orders",
+  },
+  {
+    link: "NotificationsManager",
+    icon: "notifications-outline",
+    title: "Notifications",
+  },
+  {
+    link: "IdentifyMealScreen",
+    icon: "cloud-outline",
+    title: "Genie",
+  },
+];
 
-export const QuickLinks = () => {
-  const navigation = useNavigation();
+const AffiliateLinks = () => {
+  const store_name = getItem("store_name");
 
   const _id = "RDy0NRgK4s4Oz2Kxq9tuZw";
+
+  const navigation = useNavigation();
 
   function OnPress(title: string) {
     console.info("Pressed", title);
@@ -69,17 +88,85 @@ export const QuickLinks = () => {
   }
 
   return (
-    <View className="flex-1  bg-gray-800 pt-2 pb-6 px-2">
+    <View
+      style={{
+        backgroundColor: Colors.darkGrey,
+        flex: 1,
+        paddingTop: 8,
+        paddingBottom: 24,
+        paddingHorizontal: 8,
+      }}
+    >
+      <View className="flex-1">
+        <View className="px-2">
+          <Text className="text-4xl text-gray-50 font-medium ">
+            {store_name}
+          </Text>
+        </View>
+        <ScrollView>
+          <View className={styles.quickLinksContainer}>
+            {affiliateLinksArray.map((qlink) => (
+              <QuickLink
+                key={qlink.title}
+                title={qlink.title}
+                icon={qlink.icon}
+                onPress={() => OnPress(qlink.link)}
+              />
+            ))}
+            <QuickLink
+              title={"Preview Store"}
+              icon={"eye"}
+              onPress={() =>
+                // @ts-ignore
+                navigation.navigate("PreviewStore", {
+                  _id,
+                })
+              }
+            />
+          </View>
+        </ScrollView>
+      </View>
+      <TouchableOpacity
+        onPress={async () => {
+          removeItem("ONBOARDED");
+          removeItem("affiliate");
+          removeItem("firstname");
+          removeItem("store_name");
+        }}
+        className={styles.button}
+      >
+        <Text className="text-2xl font-medium">Logout</Text>
+      </TouchableOpacity>
+    </View>
+  );
+};
+
+const AdminLinks = () => {
+  const firstname = getItem("firstname");
+
+  const _id = "RDy0NRgK4s4Oz2Kxq9tuZw";
+
+  const navigation = useNavigation();
+
+  function OnPress(title: string) {
+    console.info("Pressed", title);
+    // @ts-ignore
+    navigation.navigate(title);
+  }
+
+  return (
+    <View
+      style={{
+        backgroundColor: Colors.darkGrey,
+        flex: 1,
+        paddingTop: 8,
+        paddingBottom: 24,
+      }}
+    >
       <View className="flex-1">
         <View className="px-2">
           <Text className="text-4xl text-gray-50 font-medium">
-            Welcome Anthony
-          </Text>
-          <Text
-            style={{ color: Colors.link }}
-            className="text-2xl text-gray-50 font-medium mt-2"
-          >
-            Customize
+            Welcome {firstname}
           </Text>
         </View>
         <ScrollView>
@@ -102,17 +189,15 @@ export const QuickLinks = () => {
                 })
               }
             />
-            {/* <TouchableOpacity className="w-full mt-6">
-              <Text className="text-center text-gray-50 text-2xl font-medium">
-                Customize Actions
-              </Text>
-            </TouchableOpacity> */}
           </View>
         </ScrollView>
       </View>
       <TouchableOpacity
         onPress={async () => {
-          await deleteKey("ONBOARDED");
+          removeItem("ONBOARDED");
+          removeItem("affiliate");
+          removeItem("firstname");
+          removeItem("store_name");
         }}
         className={styles.button}
       >
@@ -120,6 +205,36 @@ export const QuickLinks = () => {
       </TouchableOpacity>
     </View>
   );
+};
+
+const QuickLink = ({ title, icon, onPress }: QuickLinkProps) => {
+  return (
+    <TouchableOpacity
+      onPress={onPress}
+      className=" border h-28 w-40 border-gray-50 px-2  mb-4 rounded-xl items-center justify-center"
+    >
+      <Ionicons name={icon as any} size={40} color="white" />
+      <Text className="text-[16px] font-medium text-white">{title}</Text>
+    </TouchableOpacity>
+  );
+};
+
+export const QuickLinks = () => {
+  const navigation = useNavigation();
+
+  const isAffiliate = getItem("affiliate");
+
+  function OnPress(title: string) {
+    console.info("Pressed", title);
+    // @ts-ignore
+    navigation.navigate(title);
+  }
+
+  if (isAffiliate) {
+    return <AffiliateLinks />;
+  }
+
+  return <AdminLinks />;
 };
 
 const styles = {

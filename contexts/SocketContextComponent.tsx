@@ -68,9 +68,6 @@ const SocketContextComponent: React.FunctionComponent<
 
     socket.io.on("reconnect_failed", () => {
       console.info("Reconnection failure.");
-      alert(
-        "We are unable to connect you to the chat service.  Please make sure your internet connection is stable or try again later."
-      );
     });
   };
 

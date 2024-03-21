@@ -1,12 +1,24 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
+import Colors from "../../constants/colors";
 
 type Props = {
   children?: React.ReactNode;
 };
 
 export const Screen = ({ children }: Props) => {
-  return <View className="bg-gray-800 flex-1 px-2 py-6">{children}</View>;
+  return (
+    <View
+      style={{
+        backgroundColor: Colors.darkGrey,
+        flex: 1,
+        paddingHorizontal: 8,
+        paddingVertical: 24,
+      }}
+    >
+      {children}
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({});

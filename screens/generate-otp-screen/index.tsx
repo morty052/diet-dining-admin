@@ -7,20 +7,36 @@ import {
   View,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { getItem } from "../../utils/storage";
+import { baseUrl } from "../../constants/baseUrl";
+import Colors from "../../constants/colors";
 
-export function GenerateOtpScreen() {
+export function GenerateOtpScreen({ navigation }) {
   const [OTP, setOTP] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  async function getOTP(admin_id: string) {
-    // console.info("this is id", admin_id);
-    // console.log("jjj");
+  async function getOTP() {
+    const isAffiliate = getItem("affiliate");
+    console.log("isAffiliate", isAffiliate);
     try {
       setLoading(true);
+      if (!isAffiliate) {
+        const admin_id = getItem("admin_id");
+        const res = await fetch(
+          // `http://localhost:3000/admin/get-otp?admin_id=${admin_id}`
+          `${baseUrl}/admin/get-otp?admin_id=${admin_id}`
+        );
+        const data = await res.json();
+        const { otp } = data;
+        setOTP(otp);
+        setLoading(false);
+        return;
+      }
+
+      const affiliate_id = getItem("affiliate_id");
       const res = await fetch(
-        // `http://192.168.100.16:3000/admin/get-otp?admin_id=${admin_id}`
-        // `http://localhost:3000/admin/get-otp?admin_id=${admin_id}`
-        `https://diet-dining-server.onrender.com/admin/get-otp?admin_id=${admin_id}`
+        `${baseUrl}/affiliates/get-otp?affiliate_id=${affiliate_id}`
+        // `https://diet-dining-server.onrender.com/affiliates/get-otp?affiliate_id=${affiliate_id}`
       );
       const data = await res.json();
       const { otp } = data;
@@ -33,7 +49,15 @@ export function GenerateOtpScreen() {
   }
 
   return (
-    <View className={styles.container}>
+    <View
+      style={{
+        backgroundColor: Colors.darkGrey,
+        flex: 1,
+        paddingVertical: 64,
+        paddingHorizontal: 16,
+        justifyContent: "space-between",
+      }}
+    >
       <View className="flex-1 justify-center flex pb-20">
         {OTP && (
           <>
@@ -67,10 +91,15 @@ export function GenerateOtpScreen() {
       </View>
       <View className="gap-4">
         <TouchableOpacity
-          onPress={() => getOTP("4118a74d-0b15-4f81-8cab-135e035cc395")}
+          onPress={() => (OTP ? navigation.goBack() : getOTP())}
           className={styles.button}
         >
-          <Text className="text-3xl">Generate OTP</Text>
+          {!OTP && (
+            <Text className="text-3xl">
+              {loading ? "Generating..." : "Generate OTP"}
+            </Text>
+          )}
+          {OTP && <Text className="text-3xl">{"Done"}</Text>}
         </TouchableOpacity>
       </View>
     </View>
@@ -78,6 +107,6 @@ export function GenerateOtpScreen() {
 }
 
 const styles = {
-  container: "flex-1 bg-gray-800 py-16 px-4 justify-between",
+  container: "flex-1  py-16 px-4 justify-between",
   button: " bg-white py-4 px-2 justify-center flex-row rounded-lg",
 };

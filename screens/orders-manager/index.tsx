@@ -14,47 +14,20 @@ import { Ionicons } from "@expo/vector-icons";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
 import OrderCard, { TorderProps } from "./components/OrderCard";
+import { baseUrl } from "../../constants/baseUrl";
+import FilterButton from "./components/FilterButton";
+import SearchBar from "./components/SearchBar";
+import { getItem } from "../../utils/storage";
+import { AffiliateOrdersStack } from "./routes/AffiliateOrdersStack";
+import Colors from "../../constants/colors";
 
 const Stack = createNativeStackNavigator();
 
 type Props = {};
 
-const FilterButton = ({ title }: { title: string }) => {
-  const navigation = useNavigation();
-
-  // const screenTitle = useNavigation().getId();
-
-  // console.log(screenTitle);
-
-  return (
-    <TouchableOpacity
-      // @ts-ignore
-      onPress={() => navigation.navigate(title)}
-      className="text-gray-50  border border-white flex items-center justify-center  py-1 rounded-xl w-24 h-8 "
-    >
-      <Text className="text-white  font-medium text-center">{title}</Text>
-    </TouchableOpacity>
-  );
-};
-
-const SearchBar = () => {
-  return (
-    <View className="border border-white px-2 py-1 mb-4  rounded-lg flex items-center flex-row">
-      <Ionicons size={24} color={"white"} name="search-outline" />
-      <TextInput
-        placeholderTextColor={"white"}
-        placeholder="Search All Orders"
-        className="w-full p-2 text-white"
-      />
-    </View>
-  );
-};
-
 const AllOrdersView = () => {
   const get_all_orders = async () => {
-    const res = await fetch(
-      "https://diet-dining-server.onrender.com/orders/get-all"
-    );
+    const res = await fetch(`${baseUrl}/orders/get-all`);
     // const res = await fetch("http://localhost:3000/orders/get-all");
     const data = await res.json();
     return data;
@@ -67,7 +40,7 @@ const AllOrdersView = () => {
   } = useQuery({ queryKey: ["orders"], queryFn: get_all_orders });
 
   return (
-    <View className="bg-gray-800 flex-1">
+    <ScrollView style={{ flex: 1, backgroundColor: Colors.darkGrey }}>
       {orders?.map((order: TorderProps, index: number) => (
         <OrderCard
           status={order.status}
@@ -81,7 +54,7 @@ const AllOrdersView = () => {
       <Text className="text-center text-gray-50 text-lg my-4 font-medium">
         Pull Down to refresh
       </Text>
-    </View>
+    </ScrollView>
   );
 };
 
@@ -121,6 +94,12 @@ const PendingOrdersView = () => {
 };
 
 export const OrdersManager = (props: Props) => {
+  const isAffiliate = getItem("affiliate");
+
+  if (isAffiliate) {
+    return <AffiliateOrdersStack />;
+  }
+
   return (
     <Screen>
       <View className="flex flex-row justify-between mb-4 max-h-12">

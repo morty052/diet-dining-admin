@@ -3,9 +3,11 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Home from "../screens/Home";
 import { NavBar } from "../components";
 import {
+  AffiliateStoreManager,
   GenerateOtpScreen,
   LoginPage,
   NotificationsManager,
+  OrderScreen,
   OrdersManager,
   QuickLinks,
   StoresManager,
@@ -17,6 +19,9 @@ import PreviewStoreScreen from "../screens/preview-store-screen";
 import PassCodeScreen from "../screens/passcode-screen";
 import IdentifyMealScreen from "../components/image-analyzer";
 import OnboardingRoutes from "./OnboardingRoutes";
+import PreviewStoreRoutes from "./PreviewStoreRoutes";
+import Colors from "../constants/colors";
+import BackButton from "../components/ui/BackButton";
 
 type rootStackParams = {
   Home: undefined;
@@ -25,10 +30,16 @@ type rootStackParams = {
   GenerateOtp: undefined;
   QuickLinks: undefined;
   StoresManager: undefined;
+  AffiliateStoreManager: undefined;
   OrdersManager: undefined;
   NotificationsManager: undefined;
   IdentifyMealScreen: undefined;
   OnboardingRoutes: undefined;
+  Order: {
+    order_id: string;
+    products: any[];
+    total: number;
+  };
   PreviewStore: {
     _id: string;
   };
@@ -36,22 +47,21 @@ type rootStackParams = {
 
 const Stack = createNativeStackNavigator<rootStackParams>();
 
-const BackButton = () => {
-  const navigation = useNavigation();
+const Appstack = ({
+  ONBOARDED,
+  affiliate,
+}: {
+  ONBOARDED: boolean;
+  affiliate?: boolean;
+}) => {
   return (
-    <TouchableOpacity
-      className="flex flex-row items-center gap-2 bg-red-300"
-      onPress={() => navigation.goBack()}
+    <Stack.Navigator
+      screenOptions={{
+        headerStyle: { backgroundColor: Colors.darkGrey },
+        headerShadowVisible: false,
+      }}
+      initialRouteName={ONBOARDED ? "Auth" : "OnboardingRoutes"}
     >
-      <Ionicons size={28} color={"white"} name="chevron-back" />
-      <Text>Back</Text>
-    </TouchableOpacity>
-  );
-};
-
-const Appstack = ({ ONBOARDED }: { ONBOARDED: boolean }) => {
-  return (
-    <Stack.Navigator initialRouteName={ONBOARDED ? "Auth" : "OnboardingRoutes"}>
       <Stack.Screen
         options={{
           // header: () => <NavBar />,
@@ -86,17 +96,17 @@ const Appstack = ({ ONBOARDED }: { ONBOARDED: boolean }) => {
           // header: () => <NavBar minimal />,
           title: "Quick links",
           headerTitleStyle: { color: "white" },
-          headerStyle: { backgroundColor: "rgb(31 41 55)" },
+          headerBackVisible: false,
+          headerTitleAlign: "center",
         }}
         name="QuickLinks"
         component={QuickLinks}
       />
       <Stack.Screen
         options={{
-          // header: () => <NavBar minimal />,
+          headerLeft: () => <BackButton />,
           title: "",
           headerTitleStyle: { color: "white" },
-          headerStyle: { backgroundColor: "rgb(31 41 55)" },
         }}
         name="GenerateOtp"
         component={GenerateOtpScreen}
@@ -106,30 +116,45 @@ const Appstack = ({ ONBOARDED }: { ONBOARDED: boolean }) => {
           // header: () => <NavBar minimal />,
           title: "Orders",
           headerTitleStyle: { color: "white" },
-          headerStyle: { backgroundColor: "rgb(31 41 55)" },
         }}
         name="NotificationsManager"
         component={NotificationsManager}
       />
       <Stack.Screen
         options={{
-          // header: () => <NavBar minimal />,
+          headerLeft: () => <BackButton />,
           title: "Orders",
           headerTitleStyle: { color: "white" },
-          headerStyle: { backgroundColor: "rgb(31 41 55)" },
+          headerTitleAlign: "center",
+          // headerShown: false,
         }}
         name="OrdersManager"
         component={OrdersManager}
       />
+
       <Stack.Screen
         options={{
-          // header: () => <NavBar minimal />,
+          headerLeft: () => <BackButton />,
+          headerTitleAlign: "center",
           title: "Store Manager",
           headerTitleStyle: { color: "white" },
-          headerStyle: { backgroundColor: "rgb(31 41 55)" },
         }}
         name="StoresManager"
         component={StoresManager}
+      />
+      <Stack.Screen
+        options={{
+          headerLeft: () => <BackButton />,
+          title: "",
+          headerTitleStyle: { color: "white" },
+        }}
+        name="AffiliateStoreManager"
+        component={AffiliateStoreManager}
+      />
+      <Stack.Screen
+        options={{ headerShown: false }}
+        name="Order"
+        component={OrderScreen}
       />
       <Stack.Screen
         options={{
@@ -140,15 +165,14 @@ const Appstack = ({ ONBOARDED }: { ONBOARDED: boolean }) => {
           // headerBackVisible: false,
         }}
         name="PreviewStore"
-        component={PreviewStoreScreen}
+        component={PreviewStoreRoutes}
       />
       <Stack.Screen
         options={{
           // header: () => <NavBar minimal />,
-          headerShown: false,
           // headerTransparent: true,
           headerTitle: "",
-          // headerBackVisible: false,
+          headerShown: false,
         }}
         name="IdentifyMealScreen"
         component={IdentifyMealScreen}

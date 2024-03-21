@@ -1,6 +1,8 @@
 import { useState } from "react";
 import {
   ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
   StyleSheet,
   Text,
   TextInput,
@@ -11,56 +13,22 @@ import { Ionicons } from "@expo/vector-icons";
 import Colors from "../../constants/colors";
 import { useSignIn } from "@clerk/clerk-expo";
 import { getValueFor, save } from "../../utils/secureStore";
+import { setItem } from "../../utils/storage";
+import { baseUrl } from "../../constants/baseUrl";
 
 export function ConfirmOtpScreen({ route, navigation }: any) {
   const [OTP, setOTP] = useState("");
   const [loading, setLoading] = useState(false);
   const [attempting, setAttempting] = useState(false);
+  const [error, setError] = useState("");
 
   const { emailAddress } = route.params;
 
   const { isLoaded, signIn, setActive } = useSignIn();
 
-  async function getOTP(admin_id: string) {
-    // console.info("this is id", admin_id);
-    // console.log("jjj");
-    try {
-      setLoading(true);
-      const res = await fetch(
-        // `http://192.168.100.16:3000/admin/get-otp?admin_id=${admin_id}`
-        // `http://localhost:3000/admin/get-otp?admin_id=${admin_id}`
-        `https://diet-dining-server.onrender.com/admin/get-otp?admin_id=${admin_id}`
-      );
-      const data = await res.json();
-      const { otp } = data;
-      setOTP(otp);
-      setLoading(false);
-    } catch (error) {
-      setLoading(false);
-      console.log(error);
-    }
-  }
-
-  async function handlPress() {
-    if (!isLoaded) {
-      return;
-    }
-
-    try {
-      // await signIn?.prepareFirstFactor({
-      //   strategy: "email_code",
-
-      await signIn.create({
-        strategy: "email_code",
-        identifier: emailAddress,
-      });
-      setAttempting(true);
-    } catch (error) {
-      console.error({ error });
-    }
-  }
-
   async function handleVerify() {
+    const isAdmin = emailAddress.includes("@dietdining.org");
+    console.info("isAdmin", isAdmin);
     if (loading) {
       return;
     }
@@ -69,7 +37,44 @@ export function ConfirmOtpScreen({ route, navigation }: any) {
       return;
     }
 
+    if (!OTP) {
+      return;
+    }
     setLoading(true);
+
+    if (isAdmin) {
+      try {
+        const t = await signIn.attemptFirstFactor({
+          strategy: "email_code",
+          code: OTP,
+        });
+        console.info(t);
+        const expo_push_token = await getValueFor("expo_push_token");
+
+        const url = `${baseUrl}/admin/register-companion?admin_email=${emailAddress}&expo_push_token=${expo_push_token}`;
+        // const url = `http://localhost:3000/admin/register-companion?admin_email=${emailAddress}&expo_push_token=${expo_push_token}`;
+        const res = await fetch(url);
+        const data = await res.json();
+        const { _id, firstname, status } = data;
+        console.log(data);
+        if (status == "CONFIRMED") {
+          setItem("admin_id", _id);
+          setItem("firstname", firstname);
+          setItem("ONBOARDED", "TRUE");
+          setItem("admin", "TRUE");
+          return navigation.navigate("QuickLinks");
+        }
+
+        if (status == "REJECTED") {
+          throw new Error("Something went wrong");
+        }
+      } catch (error) {
+        console.error(error);
+        setError("Something went wrong");
+        setLoading(false);
+      }
+    }
+
     try {
       await signIn.attemptFirstFactor({
         strategy: "email_code",
@@ -78,59 +83,78 @@ export function ConfirmOtpScreen({ route, navigation }: any) {
 
       const expo_push_token = await getValueFor("expo_push_token");
 
-      const url = `https://8b52-102-216-10-2.ngrok-free.app/affiliates/register-companion?affiliate_email=${emailAddress}&expo_push_token=${expo_push_token}`;
+      const url = `${baseUrl}/affiliates/register-companion?affiliate_email=${emailAddress}&expo_push_token=${expo_push_token}`;
+      // const url = `http://localhost:3000/affiliates/register-companion?affiliate_email=${emailAddress}&expo_push_token=${expo_push_token}`;
       const res = await fetch(url);
       const data = await res.json();
-      const { _id } = data;
-      await save("affiliate_id", _id);
-      await save("ONBOARDED", "TRUE");
-      navigation.navigate("QuickLinks");
+      const { _id, store_name, status } = data;
 
-      console.log("verified");
+      if (status == "CONFIRMED") {
+        setItem("affiliate_id", _id);
+        setItem("ONBOARDED", "TRUE");
+        setItem("store_name", store_name);
+        setItem("affiliate", "TRUE");
+        navigation.navigate("QuickLinks");
+      }
+
+      if (status == "REJECTED") {
+        throw new Error("Something went wrong");
+      }
     } catch (error) {
-      console.error({ error });
+      console.error(error);
+      setLoading(false);
+      setError("Something went wrong");
     }
   }
 
   return (
     <View style={styles.container}>
-      <View className="flex-1 justify-center flex pb-20">
-        {!attempting && (
-          <View>
-            <View className="flex flex-row justify-center py-4">
-              <Ionicons size={80} color={"white"} name="lock-closed-outline" />
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={styles.container}
+      >
+        <View className="justify-center flex pb-20">
+          {!attempting && (
+            <View>
+              <View className="flex flex-row justify-center py-4">
+                <Ionicons
+                  size={80}
+                  color={"white"}
+                  name="lock-closed-outline"
+                />
+              </View>
+              <Text className="text-center text-3xl text-gray-50 font-semibold mb-4">
+                Verify Affiliate Email
+              </Text>
+              <Text className="text-center text-[15px] text-gray-50 font-medium mb-4">
+                Enter the code we sent to your email below.
+              </Text>
+              <TextInput
+                value={OTP}
+                autoFocus
+                keyboardType="number-pad"
+                onChangeText={(text) => setOTP(text)}
+                placeholderTextColor={"white"}
+                placeholder="One Time Code"
+                style={styles.input}
+              />
             </View>
-            <Text className="text-center text-3xl text-gray-50 font-semibold mb-4">
-              Verify Affiliate Email
-            </Text>
-            <Text className="text-center text-[15px] text-gray-50 font-medium mb-4">
-              Enter the code we sent to your email below.
-            </Text>
-            <TextInput
-              value={OTP}
-              autoFocus
-              keyboardType="number-pad"
-              onChangeText={(text) => setOTP(text)}
-              placeholderTextColor={"white"}
-              placeholder="One Time Code"
-              style={styles.input}
-            />
-          </View>
-        )}
-      </View>
-      <View className="gap-4">
-        <TouchableOpacity
-          // onPress={() => getOTP("4118a74d-0b15-4f81-8cab-135e035cc395")}
-          onPress={() => handleVerify()}
-          style={styles.button}
-        >
-          {!loading ? (
-            <Text className="text-3xl">Confirm</Text>
-          ) : (
-            <ActivityIndicator size={40} color={"black"} />
           )}
-        </TouchableOpacity>
-      </View>
+        </View>
+        <View className="gap-4">
+          <TouchableOpacity
+            // onPress={() => getOTP("4118a74d-0b15-4f81-8cab-135e035cc395")}
+            onPress={() => handleVerify()}
+            style={styles.button}
+          >
+            {!loading ? (
+              <Text className="text-3xl">Confirm</Text>
+            ) : (
+              <ActivityIndicator size={40} color={"black"} />
+            )}
+          </TouchableOpacity>
+        </View>
+      </KeyboardAvoidingView>
     </View>
   );
 }

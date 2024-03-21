@@ -13,7 +13,8 @@ import { useQuery } from "@tanstack/react-query";
 import { Ionicons } from "@expo/vector-icons";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
-import { baseUrl } from "../../constants/baseUrl";
+import { getItem } from "../../utils/storage";
+import { SEMI_BOLD } from "../../constants/fontNames";
 
 const Tabs = createBottomTabNavigator();
 
@@ -25,12 +26,7 @@ type TstoreProps = {
   store_name: string;
   store_image: string;
   store_logo: string;
-  store_address: {
-    street: string;
-    city: string;
-    province: string;
-    postal_code: number;
-  };
+  store_address: string;
   store_description: string;
   store_status: any;
 };
@@ -39,7 +35,7 @@ const AllStoresView = () => {
   const navigate = useNavigation();
 
   async function get_stores() {
-    const res = await fetch(`${baseUrl}/stores/get-all`);
+    const res = await fetch("http://localhost:3000/stores/get-all");
     const data = await res.json();
     console.info(data);
     return data;
@@ -85,8 +81,9 @@ const AllStoresView = () => {
                 </Text>
               </View>
               <View className="flex flex-row items-center gap-1 py-1">
+                <Ionicons size={20} name="location-outline" />
                 <Text className=" text-[18px] font-medium text-gray-800">
-                  {store.store_address.street}
+                  {store.store_address}
                 </Text>
               </View>
               {/* <View className="">
@@ -110,7 +107,7 @@ const OnboardingStoresView = (props: Props) => {
   );
 };
 
-const StoreView = ({ route }) => {
+const StoreView = ({ route }: { route: any }) => {
   const { _id } = route.params;
   return (
     <Screen>
@@ -119,13 +116,21 @@ const StoreView = ({ route }) => {
   );
 };
 
-export const StoresManager = (props: Props) => {
+export const AffiliateStoreManager = ({ navigation }: any) => {
+  const store_name = getItem("store_name");
+
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerTitle: store_name,
+      headerTitleAlign: "center",
+      headerTitleStyle: { color: "white", fontSize: 17, fontFamily: SEMI_BOLD },
+    });
+  }, []);
+
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="AllStores" component={AllStoresView} />
-      <Stack.Screen name="OnboardingStores" component={OnboardingStoresView} />
-      <Stack.Screen name="store" component={StoreView} />
-    </Stack.Navigator>
+    <Screen>
+      <Text>{"_id"}</Text>
+    </Screen>
   );
 };
 

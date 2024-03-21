@@ -1,4 +1,14 @@
-import { View, Text, TouchableOpacity, Image } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  StyleSheet,
+  Pressable,
+} from "react-native";
+import Colors from "../../../constants/colors";
+import React from "react";
+import { SEMI_BOLD } from "../../../constants/fontNames";
 
 export type TorderProps = {
   vendor: string;
@@ -12,6 +22,47 @@ export type TorderProps = {
   };
 };
 
+const OrderStatusBar = ({
+  status,
+}: {
+  status: {
+    completed: boolean;
+    cancelled: boolean;
+    pending: boolean;
+  };
+}) => {
+  const statusText = React.useMemo(() => {
+    if (status.completed) {
+      return "Completed";
+    }
+
+    if (status.cancelled) {
+      return "Cancelled";
+    }
+
+    if (status.pending) {
+      return "Pending";
+    }
+  }, [status]);
+  return (
+    <View
+      style={[
+        styles.statusContainer,
+        {
+          backgroundColor:
+            statusText === "Pending"
+              ? "orange"
+              : statusText === "Cancelled"
+              ? "red"
+              : Colors.primary,
+        },
+      ]}
+    >
+      <Text style={styles.statusText}>{statusText}</Text>
+    </View>
+  );
+};
+
 const OrderCard = ({
   vendor,
   location,
@@ -19,52 +70,45 @@ const OrderCard = ({
   total,
   status,
 }: TorderProps) => {
-  const OrderStatus = ({
-    status,
-  }: {
-    status: {
-      pending: boolean;
-      completed: boolean;
-      cancelled: boolean;
-    };
-  }) => {
-    const { pending, cancelled, completed } = status;
-    let state = "";
-    switch (true) {
-      case pending:
-        state = "Pending";
-        break;
-      case cancelled:
-        state = "Cancelled";
-        break;
-      case completed:
-        state = "Completed";
-        break;
-      default:
-        break;
-    }
-
-    return (
-      <View className="absolute top-2 right-2">
-        <View className="">
-          <Text>{state}</Text>
-        </View>
-      </View>
-    );
-  };
-
   return (
-    <TouchableOpacity className="border mb-4 relative flex flex-row border-white bg-gray-50 rounded-lg p-2">
-      <Image className="h-20 w-20" source={{ uri: vendor_logo }} />
-      <View className="pl-2 space-y-1">
-        {/* <Text className="font-medium">{vendor}</Text> */}
-        <Text className="font-medium">Pending</Text>
-        <Text>{location}</Text>
+    <Pressable style={styles.container}>
+      <Image style={styles.image} source={{ uri: vendor_logo }} />
+      <View style={{ flex: 1, paddingLeft: 8, gap: 5 }}>
+        <Text className="font-medium">{vendor}</Text>
+        {/* <Text>{location}</Text> */}
         <Text className="text-xl font-semibold">${total}</Text>
       </View>
-      <OrderStatus status={status} />
-    </TouchableOpacity>
+      <OrderStatusBar status={status} />
+    </Pressable>
   );
 };
 
 export default OrderCard;
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: "row",
+    backgroundColor: "rgb(249 250 251)",
+    padding: 8,
+    borderRadius: 8,
+    marginBottom: 16,
+    position: "relative",
+  },
+  image: {
+    width: 80,
+    height: 80,
+    borderRadius: 10,
+  },
+  statusContainer: {
+    paddingHorizontal: 5,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 10,
+    paddingVertical: 3,
+    position: "absolute",
+    top: 5,
+    right: 5,
+    width: 100,
+  },
+  statusText: { color: "white", fontSize: 12, fontFamily: SEMI_BOLD },
+});

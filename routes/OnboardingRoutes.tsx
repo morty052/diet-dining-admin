@@ -22,6 +22,7 @@ type rootStackParams = {
   Login: undefined;
   OtpScreen: {
     emailAddress: string;
+    isAdmin: boolean;
   };
 };
 

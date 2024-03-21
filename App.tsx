@@ -11,6 +11,7 @@ import * as Notifications from "expo-notifications";
 import Constants from "expo-constants";
 import { getValueFor, save } from "./utils/secureStore";
 import * as SplashScreen from "expo-splash-screen";
+import { getItem } from "./utils/storage";
 
 type Props = {};
 
@@ -99,7 +100,7 @@ const App = (props: Props) => {
   }, []);
 
   async function checkForKey() {
-    const key = await getValueFor("ONBOARDED");
+    const key = getItem("ONBOARDED");
 
     if (key == "TRUE") {
       await SplashScreen.hideAsync();
@@ -122,14 +123,12 @@ const App = (props: Props) => {
   return (
     <ClerkProvider publishableKey="pk_test_Zmxvd2luZy1waXJhbmhhLTQ4LmNsZXJrLmFjY291bnRzLmRldiQ">
       <QueryClientProvider client={queryClient}>
-        <SocketContextComponent>
-          <NavigationContainer
-            linking={linking}
-            fallback={<Text>Loading...</Text>}
-          >
-            <Appstack ONBOARDED={ONBOARDED} />
-          </NavigationContainer>
-        </SocketContextComponent>
+        <NavigationContainer
+          linking={linking}
+          fallback={<Text>Loading...</Text>}
+        >
+          <Appstack ONBOARDED={ONBOARDED} />
+        </NavigationContainer>
       </QueryClientProvider>
     </ClerkProvider>
   );
