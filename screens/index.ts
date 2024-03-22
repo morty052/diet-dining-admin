@@ -8,3 +8,4 @@ export * from "./preview-store-screen";
 export * from "./passcode-screen";
 export * from "./order-screen";
 export * from "./affiliate-store-manager";
+export * from "./settings-screen";

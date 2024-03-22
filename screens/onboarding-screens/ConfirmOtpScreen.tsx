@@ -12,8 +12,9 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import Colors from "../../constants/colors";
 import { useSignIn } from "@clerk/clerk-expo";
+import { useSignUp } from "@clerk/clerk-expo";
 import { getValueFor, save } from "../../utils/secureStore";
-import { setItem } from "../../utils/storage";
+import { removeItem, setItem } from "../../utils/storage";
 import { baseUrl } from "../../constants/baseUrl";
 
 export function ConfirmOtpScreen({ route, navigation }: any) {
@@ -22,9 +23,11 @@ export function ConfirmOtpScreen({ route, navigation }: any) {
   const [attempting, setAttempting] = useState(false);
   const [error, setError] = useState("");
 
-  const { emailAddress } = route.params;
+  const { emailAddress, isRegister } = route.params;
 
   const { isLoaded, signIn, setActive } = useSignIn();
+
+  const { signUp } = useSignUp();
 
   async function handleVerify() {
     const isAdmin = emailAddress.includes("@dietdining.org");
@@ -42,16 +45,24 @@ export function ConfirmOtpScreen({ route, navigation }: any) {
     }
     setLoading(true);
 
+    if (isRegister) {
+      await signUp?.attemptEmailAddressVerification({
+        code: OTP,
+      });
+    }
+
+    if (!isRegister) {
+      await signIn.attemptFirstFactor({
+        strategy: "email_code",
+        code: OTP,
+      });
+    }
+
     if (isAdmin) {
       try {
-        const t = await signIn.attemptFirstFactor({
-          strategy: "email_code",
-          code: OTP,
-        });
-        console.info(t);
         const expo_push_token = await getValueFor("expo_push_token");
-
-        const url = `${baseUrl}/admin/register-companion?admin_email=${emailAddress}&expo_push_token=${expo_push_token}`;
+        const email = emailAddress.trim();
+        const url = `${baseUrl}/admin/register-companion?admin_email=${email}&expo_push_token=${expo_push_token}`;
         // const url = `http://localhost:3000/admin/register-companion?admin_email=${emailAddress}&expo_push_token=${expo_push_token}`;
         const res = await fetch(url);
         const data = await res.json();
@@ -62,10 +73,16 @@ export function ConfirmOtpScreen({ route, navigation }: any) {
           setItem("firstname", firstname);
           setItem("ONBOARDED", "TRUE");
           setItem("admin", "TRUE");
-          return navigation.navigate("QuickLinks");
+          setLoading(false);
+          setOTP("");
+          // * REMOVE THE SIGNED OUT ITEM THAT TRIGGERS NAVIGATION BACK TO LOGIN SCREEN
+          removeItem("SignedOut");
+          return navigation.navigate("Unlock");
         }
 
         if (status == "REJECTED") {
+          console.log(status);
+          setLoading(false);
           throw new Error("Something went wrong");
         }
       } catch (error) {
@@ -76,14 +93,11 @@ export function ConfirmOtpScreen({ route, navigation }: any) {
     }
 
     try {
-      await signIn.attemptFirstFactor({
-        strategy: "email_code",
-        code: OTP,
-      });
-
       const expo_push_token = await getValueFor("expo_push_token");
 
-      const url = `${baseUrl}/affiliates/register-companion?affiliate_email=${emailAddress}&expo_push_token=${expo_push_token}`;
+      const email = emailAddress.trim();
+
+      const url = `${baseUrl}/affiliates/register-companion?affiliate_email=${email}&expo_push_token=${expo_push_token}`;
       // const url = `http://localhost:3000/affiliates/register-companion?affiliate_email=${emailAddress}&expo_push_token=${expo_push_token}`;
       const res = await fetch(url);
       const data = await res.json();
@@ -94,10 +108,15 @@ export function ConfirmOtpScreen({ route, navigation }: any) {
         setItem("ONBOARDED", "TRUE");
         setItem("store_name", store_name);
         setItem("affiliate", "TRUE");
-        navigation.navigate("QuickLinks");
+        setLoading(false);
+        setOTP("");
+        // * REMOVE THE SIGNED OUT ITEM THAT TRIGGERS NAVIGATION BACK TO LOGIN SCREEN
+        removeItem("SignedOut");
+        navigation.navigate("Unlock");
       }
 
       if (status == "REJECTED") {
+        setLoading(false);
         throw new Error("Something went wrong");
       }
     } catch (error) {
@@ -124,7 +143,7 @@ export function ConfirmOtpScreen({ route, navigation }: any) {
                 />
               </View>
               <Text className="text-center text-3xl text-gray-50 font-semibold mb-4">
-                Verify Affiliate Email
+                Verify Email
               </Text>
               <Text className="text-center text-[15px] text-gray-50 font-medium mb-4">
                 Enter the code we sent to your email below.
@@ -171,7 +190,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     gap: 20,
     justifyContent: "space-between",
-    backgroundColor: Colors.dark,
+    backgroundColor: Colors.darkGrey,
   },
   button: {
     height: 60,

@@ -11,6 +11,8 @@ import { useNavigation } from "@react-navigation/native";
 import Colors from "../../constants/colors";
 import { deleteKey } from "../../utils/secureStore";
 import { getItem, removeItem } from "../../utils/storage";
+import { useClerk } from "@clerk/clerk-expo";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 type QuickLinkProps = {
   title: string;
@@ -74,12 +76,28 @@ const affiliateLinksArray = [
   },
 ];
 
+const Stack = createNativeStackNavigator();
+
 const AffiliateLinks = () => {
   const store_name = getItem("store_name");
 
   const _id = "RDy0NRgK4s4Oz2Kxq9tuZw";
 
   const navigation = useNavigation();
+
+  const { signOut } = useClerk();
+
+  const handleLock = async () => {
+    // removeItem("affiliate");
+    // removeItem("firstname");
+    // removeItem("store_name");
+    // removeItem("affiliate_id");
+    // removeItem("admin_id");
+    // removeItem("admin");
+    // await signOut();
+    // @ts-ignore
+    navigation.navigate("Unlock");
+  };
 
   function OnPress(title: string) {
     console.info("Pressed", title);
@@ -99,7 +117,7 @@ const AffiliateLinks = () => {
     >
       <View className="flex-1">
         <View className="px-2">
-          <Text className="text-4xl text-gray-50 font-medium ">
+          <Text className="text-2xl text-gray-50 font-medium ">
             {store_name}
           </Text>
         </View>
@@ -126,16 +144,8 @@ const AffiliateLinks = () => {
           </View>
         </ScrollView>
       </View>
-      <TouchableOpacity
-        onPress={async () => {
-          removeItem("ONBOARDED");
-          removeItem("affiliate");
-          removeItem("firstname");
-          removeItem("store_name");
-        }}
-        className={styles.button}
-      >
-        <Text className="text-2xl font-medium">Logout</Text>
+      <TouchableOpacity onPress={handleLock} className={styles.button}>
+        <Text className="text-2xl font-medium">Lock</Text>
       </TouchableOpacity>
     </View>
   );
@@ -154,6 +164,20 @@ const AdminLinks = () => {
     navigation.navigate(title);
   }
 
+  const { signOut } = useClerk();
+
+  const handleLock = async () => {
+    // removeItem("affiliate");
+    // removeItem("firstname");
+    // removeItem("store_name");
+    // removeItem("affiliate_id");
+    // removeItem("admin_id");
+    // removeItem("admin");
+    // await signOut();
+    // @ts-ignore
+    navigation.navigate("Unlock");
+  };
+
   return (
     <View
       style={{
@@ -165,7 +189,7 @@ const AdminLinks = () => {
     >
       <View className="flex-1">
         <View className="px-2">
-          <Text className="text-4xl text-gray-50 font-medium">
+          <Text className="text-2xl text-gray-50 font-medium">
             Welcome {firstname}
           </Text>
         </View>
@@ -192,16 +216,8 @@ const AdminLinks = () => {
           </View>
         </ScrollView>
       </View>
-      <TouchableOpacity
-        onPress={async () => {
-          removeItem("ONBOARDED");
-          removeItem("affiliate");
-          removeItem("firstname");
-          removeItem("store_name");
-        }}
-        className={styles.button}
-      >
-        <Text className="text-2xl font-medium">Logout</Text>
+      <TouchableOpacity onPress={handleLock} className={styles.button}>
+        <Text className="text-2xl font-medium">Lock</Text>
       </TouchableOpacity>
     </View>
   );
@@ -219,16 +235,8 @@ const QuickLink = ({ title, icon, onPress }: QuickLinkProps) => {
   );
 };
 
-export const QuickLinks = () => {
-  const navigation = useNavigation();
-
-  const isAffiliate = getItem("affiliate");
-
-  function OnPress(title: string) {
-    console.info("Pressed", title);
-    // @ts-ignore
-    navigation.navigate(title);
-  }
+export const QuickLinks = ({ route }: any) => {
+  const { isAffiliate } = route.params ?? {};
 
   if (isAffiliate) {
     return <AffiliateLinks />;

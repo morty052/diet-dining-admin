@@ -12,6 +12,8 @@ import Constants from "expo-constants";
 import { getValueFor, save } from "./utils/secureStore";
 import * as SplashScreen from "expo-splash-screen";
 import { getItem } from "./utils/storage";
+import { StatusBar } from "expo-status-bar";
+import { Colors } from "react-native/Libraries/NewAppScreen";
 
 type Props = {};
 
@@ -58,8 +60,10 @@ async function registerForPushNotificationsAsync() {
 
     console.log(data);
     await save("expo_push_token", `${data}`);
+    await SplashScreen.hideAsync();
   } else {
     alert("Must use physical device for Push Notifications");
+    await SplashScreen.hideAsync();
   }
 
   return token?.data;
@@ -71,6 +75,8 @@ const App = (props: Props) => {
   const notificationListener = React.useRef();
   const responseListener = React.useRef();
   const [ONBOARDED, setONBOARDED] = React.useState<null | boolean>(null);
+
+  SplashScreen.preventAutoHideAsync();
 
   const linking = {
     prefixes: [prefix],
@@ -101,15 +107,14 @@ const App = (props: Props) => {
 
   async function checkForKey() {
     const key = getItem("ONBOARDED");
-
+    // await SplashScreen.hideAsync();
     if (key == "TRUE") {
-      await SplashScreen.hideAsync();
       setONBOARDED(true);
       console.info(key);
       return;
     } else {
       setONBOARDED(false);
-      await SplashScreen.hideAsync();
+      // await SplashScreen.hideAsync();
     }
   }
   React.useEffect(() => {
@@ -129,6 +134,7 @@ const App = (props: Props) => {
         >
           <Appstack ONBOARDED={ONBOARDED} />
         </NavigationContainer>
+        <StatusBar backgroundColor={Colors.darkGrey} style="light" />
       </QueryClientProvider>
     </ClerkProvider>
   );

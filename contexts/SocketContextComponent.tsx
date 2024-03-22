@@ -11,6 +11,8 @@ import {
   SocketReducer,
 } from "./SocketContext";
 import { Text } from "react-native";
+import { getItem } from "../utils/storage";
+import { baseUrl } from "../constants/baseUrl";
 
 export type ISocketContextComponentProps = PropsWithChildren;
 
@@ -19,11 +21,15 @@ const SocketContextComponent: React.FunctionComponent<
 > = (props) => {
   const { children } = props;
 
-  const socket = useSocket("ws://localhost:4000/admin", {
-    reconnectionAttempts: 5,
-    reconnectionDelay: 1000,
-    autoConnect: false,
-  });
+  const socket = useSocket(
+    `https://norse-habitat-416400.nn.r.appspot.com/user`,
+    // `https://3039-102-216-11-2.ngrok-free.app/user`,
+    {
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
+      autoConnect: false,
+    }
+  );
 
   const [SocketState, SocketDispatch] = useReducer(
     SocketReducer,
@@ -74,10 +80,11 @@ const SocketContextComponent: React.FunctionComponent<
   const SendHandshake = async () => {
     console.info("Sending handshake to server ...");
 
-    socket.emit("handshake", async (uid: string, users: string[]) => {
+    const _id = getItem("affiliate_id");
+    socket.emit("handshake", { _id }, (uid: string, users: string[]) => {
       console.info("User handshake callback message received");
-      SocketDispatch({ type: "update_users", payload: users });
-      SocketDispatch({ type: "update_uid", payload: uid });
+      // SocketDispatch({ type: "update_users", payload: users });
+      // SocketDispatch({ type: "update_uid", payload: uid });
     });
 
     setLoading(false);

@@ -9,8 +9,12 @@
     "web": "expo start --web",
     "install-ios": "eas build:run -p ios",
     "install-android": "eas build:run -p android",
+    "build-android": "eas build --profile development --platform android",
     "build-ios": "eas build --profile development-simulator --platform ios",
-    "build-android": "eas build --profile development --platform android"
+    "preview-android": "eas build --profile preview --platform android",
+    "preview-ios": "eas build --profile preview --platform ios",
+    "preview-ios-simulator": " eas build -p ios --profile ios-preview",
+    "add-ios-device": "eas device:create"
   },
   "dependencies": {
     "@clerk/clerk-expo": "^0.20.5",

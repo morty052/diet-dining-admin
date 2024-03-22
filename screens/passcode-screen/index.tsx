@@ -6,84 +6,115 @@ import { LocalAuthenticationOptions } from "expo-local-authentication";
 import { MaterialIcons } from "@expo/vector-icons";
 import Colors from "../../constants/colors";
 import { SEMI_BOLD } from "../../constants/fontNames";
+import { getItem } from "../../utils/storage";
 
 type Props = {};
 
 const PassCodeScreen = ({ navigation }) => {
   const [unlocked, setUnlocked] = React.useState(false);
 
-  // React.useEffect(() => {
-  //   const authenticate = async () => {
-  //     const res = await Auth.authenticateAsync({
-  //       promptMessage: "Authenticate to continue",
-  //     });
-  //     if (res.success) {
-  //       setUnlocked(true);
-  //       navigation.navigate("QuickLinks");
-  //     }
-
-  //     console.log(res);
-  //   };
-
-  //   authenticate();
-  // }, []);
+  React.useEffect(() => {
+    const isSignedOut = getItem("SignedOut");
+    if (isSignedOut) {
+      navigation.navigate("Login");
+    }
+  }, []);
 
   async function retry() {
+    const isAffiliate = getItem("affiliate");
+
     const res = await Auth.authenticateAsync({
       promptMessage: "Authenticate to continue",
     });
     if (res.success) {
       setUnlocked(true);
+      if (isAffiliate) {
+        return navigation.navigate("QuickLinks", {
+          isAffiliate: true,
+        });
+      }
+
       navigation.navigate("QuickLinks");
     }
 
     console.log(res);
   }
 
-  if (!unlocked) {
-    return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: Colors.darkGrey }}>
-        <View
-          style={{
-            paddingBottom: 150,
-            alignItems: "center",
-            justifyContent: "center",
-            flex: 1,
-            paddingHorizontal: 20,
-          }}
-        >
-          <MaterialIcons
-            onPress={retry}
-            name="fingerprint"
-            size={150}
-            color={Colors.primary}
-          />
-          <Text
-            style={{ color: "white", fontSize: 24, fontFamily: SEMI_BOLD }}
-            onPress={retry}
-          >
-            Verify to continue
-          </Text>
-          <Text
-            style={{
-              color: "white",
-              fontSize: 16,
-              fontFamily: SEMI_BOLD,
-              textAlign: "center",
-            }}
-            onPress={retry}
-          >
-            Tap the icon to unlock with passcode or Face ID
-          </Text>
-        </View>
-      </SafeAreaView>
-    );
-  }
+  // if (!unlocked) {
+  //   return (
+  //     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.darkGrey }}>
+  //       <View
+  //         style={{
+  //           paddingBottom: 150,
+  //           alignItems: "center",
+  //           justifyContent: "center",
+  //           flex: 1,
+  //           paddingHorizontal: 20,
+  //         }}
+  //       >
+  //         <MaterialIcons
+  //           onPress={retry}
+  //           name="fingerprint"
+  //           size={150}
+  //           color={Colors.primary}
+  //         />
+  //         <Text
+  //           style={{ color: "white", fontSize: 24, fontFamily: SEMI_BOLD }}
+  //           onPress={retry}
+  //         >
+  //           Verify to continue
+  //         </Text>
+  //         <Text
+  //           style={{
+  //             color: "white",
+  //             fontSize: 16,
+  //             fontFamily: SEMI_BOLD,
+  //             textAlign: "center",
+  //           }}
+  //           onPress={retry}
+  //         >
+  //           Tap the icon to unlock with passcode or Face ID
+  //         </Text>
+  //       </View>
+  //     </SafeAreaView>
+  //   );
+  // }
 
   return (
-    <SafeAreaView>
-      <Text onPress={retry}>PassCodeScreen</Text>
-      <Button onPress={retry} title="Retry" />
+    <SafeAreaView style={{ flex: 1, backgroundColor: Colors.darkGrey }}>
+      <View
+        style={{
+          paddingBottom: 150,
+          alignItems: "center",
+          justifyContent: "center",
+          flex: 1,
+          paddingHorizontal: 20,
+        }}
+      >
+        <MaterialIcons
+          onPress={retry}
+          name="fingerprint"
+          size={150}
+          color={Colors.primary}
+        />
+        <Text
+          style={{ color: "white", fontSize: 24, fontFamily: SEMI_BOLD }}
+          onPress={retry}
+        >
+          Verify to continue
+        </Text>
+        <Text
+          style={{
+            color: "white",
+            fontSize: 16,
+            fontFamily: SEMI_BOLD,
+            textAlign: "center",
+          }}
+          onPress={retry}
+        >
+          Tap the icon to unlock with passcode or Face ID
+        </Text>
+      </View>
     </SafeAreaView>
   );
 };

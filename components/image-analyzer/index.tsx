@@ -6,6 +6,7 @@ import {
   Image,
   Button,
   ActivityIndicator,
+  ScrollView,
 } from "react-native";
 import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -246,7 +247,7 @@ const UploadMealScreen = ({ navigation }) => {
       const geminiRes = await fetch(`${baseUrl}/meal?url=${url}`);
       const geminidata = await geminiRes.json();
 
-      if (!geminidata.data.error) {
+      if (geminidata.data.error) {
         setLoading(false);
         throw new Error(geminidata.error);
       }
@@ -385,62 +386,64 @@ const AnalysisScreen = ({ route }) => {
 
   return (
     <Screen>
-      <View style={{ gap: 30 }}>
-        <View>
-          <Text
-            style={{
-              fontSize: 30,
-              color: Colors.light,
-              fontFamily: SEMI_BOLD,
-              borderBottomWidth: 1,
-              borderColor: Colors.accent,
-              paddingBottom: 5,
-              marginBottom: 10,
-            }}
-          >
-            Ingredients
-          </Text>
-          {ingredients?.map((ingredient: string, index: number) => (
-            <Text style={{ fontSize: 20, color: Colors.light }} key={index}>
-              {ingredient}
-            </Text>
-          ))}
-        </View>
-        <View>
-          <Text
-            style={{
-              fontSize: 30,
-              color: Colors.light,
-              fontFamily: SEMI_BOLD,
-              borderBottomWidth: 1,
-              borderColor: Colors.accent,
-              paddingBottom: 5,
-            }}
-          >
-            Nutritional Value
-          </Text>
-          {nutritional_array?.map((item: any, index: number) => (
-            <View
+      <ScrollView>
+        <View style={{ gap: 30 }}>
+          <View>
+            <Text
               style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center",
-                paddingVertical: 20,
+                fontSize: 30,
+                color: Colors.light,
+                fontFamily: SEMI_BOLD,
                 borderBottomWidth: 1,
-                borderColor: Colors.light,
+                borderColor: Colors.accent,
+                paddingBottom: 5,
+                marginBottom: 10,
               }}
-              key={index}
             >
-              <Text style={{ fontSize: 20, color: Colors.light }}>
-                {item.key}
+              Ingredients
+            </Text>
+            {ingredients?.map((ingredient: string, index: number) => (
+              <Text style={{ fontSize: 20, color: Colors.light }} key={index}>
+                {ingredient}
               </Text>
-              <Text style={{ fontSize: 20, color: Colors.light }}>
-                {item.value}
-              </Text>
-            </View>
-          ))}
+            ))}
+          </View>
+          <View>
+            <Text
+              style={{
+                fontSize: 30,
+                color: Colors.light,
+                fontFamily: SEMI_BOLD,
+                borderBottomWidth: 1,
+                borderColor: Colors.accent,
+                paddingBottom: 5,
+              }}
+            >
+              Nutritional Value
+            </Text>
+            {nutritional_array?.map((item: any, index: number) => (
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  paddingVertical: 20,
+                  borderBottomWidth: 1,
+                  borderColor: Colors.light,
+                }}
+                key={index}
+              >
+                <Text style={{ fontSize: 20, color: Colors.light }}>
+                  {item.key}
+                </Text>
+                <Text style={{ fontSize: 20, color: Colors.light }}>
+                  {item.value}
+                </Text>
+              </View>
+            ))}
+          </View>
         </View>
-      </View>
+      </ScrollView>
     </Screen>
   );
 };

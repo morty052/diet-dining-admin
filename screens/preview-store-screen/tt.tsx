@@ -201,7 +201,11 @@ const RestaurantScreen = ({ store, storePreview }: any) => {
     }
   };
 
-  const { store_name, store_image, store_id } = store ?? {};
+  const { store_name, store_image, store_id, store_tags } = store ?? {};
+
+  if (!store) {
+    return null;
+  }
 
   return (
     <>
@@ -219,11 +223,11 @@ const RestaurantScreen = ({ store, storePreview }: any) => {
       >
         <ImageBackground
           style={[{ height: 300 }]}
-          source={{ uri: store_image }}
+          source={{ uri: store_image ?? "develop" }}
         />
         <View className={`px-2 bg-white`}>
           <StoreTags
-            tags={storePreview.tags ? storePreview.tags : null}
+            tags={storePreview.tags ? storePreview.tags : store_tags}
             store_address={store?.store_address}
             store_id={store_id}
             store_name={
@@ -235,7 +239,7 @@ const RestaurantScreen = ({ store, storePreview }: any) => {
           </View> */}
         </View>
       </ScrollView>
-      <StoreSearchModal setSearching={setSearching} searching={searching} />
+      {/* <StoreSearchModal setSearching={setSearching} searching={searching} /> */}
     </>
   );
 };

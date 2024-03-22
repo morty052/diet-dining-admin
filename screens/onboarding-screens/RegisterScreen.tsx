@@ -11,6 +11,7 @@ import Colors from "../../constants/colors";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { SEMI_BOLD } from "../../constants/fontNames";
 import { useSignIn } from "@clerk/clerk-expo";
+import { useSignUp } from "@clerk/clerk-expo";
 
 type Props = {};
 
@@ -20,46 +21,92 @@ const RegisterScreen = ({ navigation }: any) => {
 
   const { isLoaded, signIn, setActive } = useSignIn();
 
-  async function handleNext() {
-    const isAdmin = email?.includes("@dietdining.org");
-    if (!email || !password) {
-      return;
-    }
+  const { signUp } = useSignUp();
 
+  // async function handleNext() {
+  //   const isAdmin = email?.includes("@dietdining.org");
+  //   const emailAddress = email?.trim();
+  //   if (!email || !password) {
+  //     return;
+  //   }
+
+  //   if (!isLoaded) {
+  //     return;
+  //   }
+
+  //   if (isAdmin) {
+  //     try {
+  //       await signIn.create({
+  //         strategy: "email_code",
+  //         identifier: emailAddress,
+  //       });
+  //       setEmail("");
+  //       setPassword("");
+  //       return navigation.navigate("OtpScreen", {
+  //         emailAddress: email,
+  //         isAdmin: true,
+  //       });
+  //     } catch (error) {
+  //       console.error({ error });
+  //     }
+  //   }
+
+  //   try {
+  //     await signIn.create({
+  //       strategy: "email_code",
+  //       identifier: emailAddress,
+  //     });
+  //     setEmail("");
+  //     setPassword("");
+  //     navigation.navigate("OtpScreen", {
+  //       emailAddress,
+  //     });
+  //   } catch (error) {
+  //     console.error({ error });
+  //   }
+  // }
+
+  const onSignUpPress = async () => {
+    const isAdmin = email?.includes("@dietdining.org");
     if (!isLoaded) {
       return;
     }
 
-    if (isAdmin) {
-      try {
-        await signIn.create({
-          strategy: "email_code",
-          identifier: email,
-        });
+    try {
+      await signUp?.create({
+        emailAddress: email,
+        password,
+      });
+
+      // send the email.
+      await signUp?.prepareEmailAddressVerification({ strategy: "email_code" });
+
+      if (isAdmin) {
+        setEmail("");
+        setPassword("");
         return navigation.navigate("OtpScreen", {
           emailAddress: email,
           isAdmin: true,
+          isRegister: true,
         });
-      } catch (error) {
-        console.error({ error });
       }
-    }
 
-    try {
-      await signIn.create({
-        strategy: "email_code",
-        identifier: email,
-      });
+      // * Handle affiliate sign up
+      setEmail("");
+      setPassword("");
       navigation.navigate("OtpScreen", {
         emailAddress: email,
+        isRegister: true,
       });
-    } catch (error) {
-      console.error({ error });
+    } catch (err: any) {
+      console.error(JSON.stringify(err, null, 2));
     }
-  }
+  };
 
   return (
-    <View style={[StyleSheet.absoluteFill, { backgroundColor: Colors.dark }]}>
+    <View
+      style={[StyleSheet.absoluteFill, { backgroundColor: Colors.darkGrey }]}
+    >
       <SafeAreaView style={{ flex: 1 }}>
         <KeyboardAvoidingView>
           <View style={styles.container}>
@@ -95,6 +142,9 @@ const RegisterScreen = ({ navigation }: any) => {
                   style={styles.input}
                   placeholderTextColor={"white"}
                   placeholder="Registered email"
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  autoComplete="email"
                 />
               </View>
               <View style={{ gap: 6 }}>
@@ -108,11 +158,22 @@ const RegisterScreen = ({ navigation }: any) => {
                   style={styles.input}
                   placeholderTextColor={"white"}
                   placeholder="Password"
+                  autoCapitalize="none"
+                  autoComplete="off"
                 />
+                <Text
+                  style={{
+                    color: "white",
+                    fontFamily: SEMI_BOLD,
+                    fontSize: 12,
+                  }}
+                >
+                  Password must be 8 characters or more
+                </Text>
               </View>
             </View>
 
-            <Pressable onPress={handleNext} style={styles.button}>
+            <Pressable onPress={onSignUpPress} style={styles.button}>
               <Text>Continue</Text>
             </Pressable>
           </View>

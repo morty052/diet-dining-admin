@@ -10,6 +10,7 @@ import {
   OrderScreen,
   OrdersManager,
   QuickLinks,
+  SettingsScreen,
   StoresManager,
 } from "../screens";
 import { TouchableOpacity, Text } from "react-native";
@@ -22,13 +23,22 @@ import OnboardingRoutes from "./OnboardingRoutes";
 import PreviewStoreRoutes from "./PreviewStoreRoutes";
 import Colors from "../constants/colors";
 import BackButton from "../components/ui/BackButton";
+import RegisterScreen from "../screens/onboarding-screens/RegisterScreen";
+import { ConfirmOtpScreen } from "../screens/onboarding-screens/ConfirmOtpScreen";
+import SettingsButton from "../components/ui/SettingsButton";
 
 type rootStackParams = {
   Home: undefined;
-  Auth: undefined;
+  Unlock: undefined;
+  Register: undefined;
   Login: undefined;
+  OtpScreen: {
+    emailAddress: string;
+    isAdmin: boolean;
+  };
   GenerateOtp: undefined;
   QuickLinks: undefined;
+  Settings: undefined;
   StoresManager: undefined;
   AffiliateStoreManager: undefined;
   OrdersManager: undefined;
@@ -60,23 +70,23 @@ const Appstack = ({
         headerStyle: { backgroundColor: Colors.darkGrey },
         headerShadowVisible: false,
       }}
-      initialRouteName={ONBOARDED ? "Auth" : "OnboardingRoutes"}
+      initialRouteName={ONBOARDED ? "Unlock" : "Register"}
     >
       <Stack.Screen
         options={{
           // header: () => <NavBar />,
           headerShown: false,
         }}
-        name="Auth"
+        name="Unlock"
         component={PassCodeScreen}
       />
-      <Stack.Screen
+      {/* <Stack.Screen
         options={{
           headerShown: false,
         }}
         name="OnboardingRoutes"
         component={OnboardingRoutes}
-      />
+      /> */}
       <Stack.Screen
         options={{
           header: () => <NavBar />,
@@ -86,10 +96,26 @@ const Appstack = ({
       />
       <Stack.Screen
         options={{
-          header: () => <NavBar />,
+          headerShown: false,
         }}
         name="Login"
         component={LoginPage}
+      />
+      <Stack.Screen
+        options={{
+          // header: () => <NavBar />,
+          headerShown: false,
+        }}
+        name="Register"
+        component={RegisterScreen}
+      />
+      <Stack.Screen
+        options={{
+          // header: () => <NavBar />,
+          headerShown: false,
+        }}
+        name="OtpScreen"
+        component={ConfirmOtpScreen}
       />
       <Stack.Screen
         options={{
@@ -98,6 +124,7 @@ const Appstack = ({
           headerTitleStyle: { color: "white" },
           headerBackVisible: false,
           headerTitleAlign: "center",
+          headerRight: () => <SettingsButton />,
         }}
         name="QuickLinks"
         component={QuickLinks}
@@ -113,8 +140,18 @@ const Appstack = ({
       />
       <Stack.Screen
         options={{
-          // header: () => <NavBar minimal />,
-          title: "Orders",
+          headerLeft: () => <BackButton />,
+          title: "Settings",
+          headerTitleStyle: { color: "white" },
+          headerTitleAlign: "center",
+        }}
+        name="Settings"
+        component={SettingsScreen}
+      />
+      <Stack.Screen
+        options={{
+          headerLeft: () => <BackButton />,
+          title: "",
           headerTitleStyle: { color: "white" },
         }}
         name="NotificationsManager"
@@ -158,11 +195,10 @@ const Appstack = ({
       />
       <Stack.Screen
         options={{
-          // header: () => <NavBar minimal />,
-          headerShown: true,
-          // headerTransparent: true,
-          headerTitle: "",
-          // headerBackVisible: false,
+          // headerLeft: () => <BackButton />,
+          // headerShown: true,
+          // headerTitle: "",
+          headerShown: false,
         }}
         name="PreviewStore"
         component={PreviewStoreRoutes}
