@@ -50,7 +50,6 @@ export const SettingsScreen = ({ navigation }: { navigation: any }) => {
 
   return (
     <Screen>
-      <Text>SettingsScreen</Text>
       <Pressable
         onPress={handleSignOut}
         style={{

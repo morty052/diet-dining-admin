@@ -129,7 +129,22 @@ export const AffiliateStoreManager = ({ navigation }: any) => {
 
   return (
     <Screen>
-      <Text>{"_id"}</Text>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          paddingBottom: 200,
+        }}
+      >
+        <Text style={{ fontSize: 30, fontFamily: SEMI_BOLD, color: "white" }}>
+          UNDER
+        </Text>
+        <Text style={{ fontSize: 30, fontFamily: SEMI_BOLD, color: "white" }}>
+          DEVELOPMENT
+        </Text>
+        <Text style={{ fontSize: 70 }}>🛠️</Text>
+      </View>
     </Screen>
   );
 };

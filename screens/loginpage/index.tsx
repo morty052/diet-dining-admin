@@ -123,9 +123,22 @@ export const LoginPage = ({ navigation }: any) => {
               </View>
             </View>
 
-            <Pressable onPress={handleNext} style={styles.button}>
-              <Text>Continue</Text>
-            </Pressable>
+            <View style={{ gap: 20 }}>
+              <Pressable onPress={handleNext} style={styles.button}>
+                <Text>Continue</Text>
+              </Pressable>
+              <Text
+                onPress={() => navigation.navigate("Register")}
+                style={{
+                  color: Colors.link,
+                  textAlign: "center",
+                  fontSize: 15,
+                  fontFamily: SEMI_BOLD,
+                }}
+              >
+                I want to create a new account
+              </Text>
+            </View>
           </View>
         </KeyboardAvoidingView>
       </SafeAreaView>
@@ -149,7 +162,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 10,
-    marginBottom: 50,
   },
   input: {
     borderWidth: 1,
