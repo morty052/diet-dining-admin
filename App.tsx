@@ -14,6 +14,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { getItem } from "./utils/storage";
 import { StatusBar } from "expo-status-bar";
 import { Colors } from "react-native/Libraries/NewAppScreen";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 type Props = {};
 
@@ -128,12 +129,14 @@ const App = (props: Props) => {
   return (
     <ClerkProvider publishableKey="pk_test_Zmxvd2luZy1waXJhbmhhLTQ4LmNsZXJrLmFjY291bnRzLmRldiQ">
       <QueryClientProvider client={queryClient}>
-        <NavigationContainer
-          linking={linking}
-          fallback={<Text>Loading...</Text>}
-        >
-          <Appstack ONBOARDED={ONBOARDED} />
-        </NavigationContainer>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <NavigationContainer
+            linking={linking}
+            fallback={<Text>Loading...</Text>}
+          >
+            <Appstack ONBOARDED={ONBOARDED} />
+          </NavigationContainer>
+        </GestureHandlerRootView>
         <StatusBar backgroundColor={Colors.darkGrey} style="light" />
       </QueryClientProvider>
     </ClerkProvider>

@@ -62,6 +62,19 @@ export const SettingsScreen = ({ navigation }: { navigation: any }) => {
       >
         <Text style={{ color: "white" }}>Sign out</Text>
       </Pressable>
+      <Pressable
+        onPress={() => navigation.navigate("ProjectManagerStack")}
+        style={{
+          height: 40,
+          backgroundColor: "red",
+          alignItems: "center",
+          justifyContent: "center",
+          borderRadius: 10,
+          marginTop: 20,
+        }}
+      >
+        <Text style={{ color: "white" }}>Go to taskmanager</Text>
+      </Pressable>
     </Screen>
   );
 };

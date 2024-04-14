@@ -13,8 +13,8 @@ const BackButton = ({ isCancel }: Props) => {
       onPress={() => navigation.goBack()}
       style={{
         padding: 4,
-        height: 40,
-        width: 40,
+        height: 35,
+        width: 35,
         alignItems: "center",
         backgroundColor: "white",
         justifyContent: "center",

@@ -26,6 +26,7 @@ import BackButton from "../components/ui/BackButton";
 import RegisterScreen from "../screens/onboarding-screens/RegisterScreen";
 import { ConfirmOtpScreen } from "../screens/onboarding-screens/ConfirmOtpScreen";
 import SettingsButton from "../components/ui/SettingsButton";
+import ProjectManagerStack from "./ProjectManagerStack";
 
 type rootStackParams = {
   Home: undefined;
@@ -53,6 +54,7 @@ type rootStackParams = {
   PreviewStore: {
     _id: string;
   };
+  ProjectManagerStack: undefined;
 };
 
 const Stack = createNativeStackNavigator<rootStackParams>();
@@ -212,6 +214,16 @@ const Appstack = ({
         }}
         name="IdentifyMealScreen"
         component={IdentifyMealScreen}
+      />
+      <Stack.Screen
+        options={{
+          // header: () => <NavBar minimal />,
+          // headerTransparent: true,
+          headerTitle: "",
+          headerShown: false,
+        }}
+        name="ProjectManagerStack"
+        component={ProjectManagerStack}
       />
     </Stack.Navigator>
   );
