@@ -6,6 +6,8 @@ import CreateProject from "../screens/project-manager/views/CreateProject";
 import BackButton from "../components/ui/BackButton";
 import Colors from "../constants/colors";
 import TaskScreen from "../screens/project-manager/views/TaskScreen";
+import CreateTaskRoutes from "./CreateTaskRoutes";
+import ProjectScreen from "../screens/project-manager/views/ProjectScreen";
 
 type Props = {};
 
@@ -24,6 +26,17 @@ const ProjectManagerStack = (props: Props) => {
         }}
         name="Projects"
         component={ProjectManager}
+      />
+      <Stack.Screen
+        options={{
+          headerLeft: () => <BackButton />,
+          headerTitleAlign: "center",
+          title: "",
+          headerTitleStyle: { color: "white" },
+          headerStyle: { backgroundColor: Colors.darkGrey },
+        }}
+        name="ProjectScreen"
+        component={ProjectScreen}
       />
       <Stack.Screen
         options={{
@@ -47,6 +60,18 @@ const ProjectManagerStack = (props: Props) => {
         }}
         name="TaskScreen"
         component={TaskScreen}
+      />
+      <Stack.Screen
+        options={{
+          headerLeft: () => <BackButton isCancel />,
+          headerTitleAlign: "center",
+          title: "",
+          headerTitleStyle: { color: "white" },
+          headerStyle: { backgroundColor: Colors.darkGrey },
+          animation: "slide_from_bottom",
+        }}
+        name="CreateTaskRoutes"
+        component={CreateTaskRoutes}
       />
     </Stack.Navigator>
   );

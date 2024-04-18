@@ -9,25 +9,50 @@ import Colors from "../../../constants/colors";
 import { Ionicons } from "@expo/vector-icons";
 import { SEMI_BOLD } from "../../../constants/fontNames";
 
-export const TaskBottomSheet = ({
-  isViewingTask,
-  setIsViewingTask,
+const explainerObject = {
+  ACTION: {
+    snippet:
+      "The Action task type as the name implies is a single action or process, to be completed by members assigned to the task or the creator of the task.",
+    example: "Create an account on behalf of the company",
+    features: [],
+  },
+  EVENT: {
+    snippet:
+      "The Event task type allows the creator pick a specific date and time for a live task",
+    example: "Team meeting",
+  },
+  REVIEW: {
+    snippet:
+      "The Review task type centers around collecting opinions from all members assigned to the task including the creator. assigned members would be able to leave a note on the item of interest and a satisfaction rating",
+    example: "Inspect latest build of drivers app",
+  },
+  POLL: {
+    snippet:
+      "The Poll task type involves collecting votes from all members assigned to the task including the task creator on multiple suggestions set by the creator of the task. assigned members have the ability to also add suggestions",
+    example: "Select new email provider",
+  },
+};
+
+export const TaskTypeInfoSheet = ({
   bottomSheetRef,
+  taskType,
 }: {
-  isViewingTask: TaskItemProps | null;
-  setIsViewingTask: React.Dispatch<React.SetStateAction<TaskItemProps | null>>;
   bottomSheetRef: React.MutableRefObject<BottomSheet | null>;
+  taskType: string;
 }) => {
   // ref
 
-  const snapPoints = useMemo(() => ["50%", "85%"], []);
+  const snapPoints = useMemo(() => ["95%"], []);
 
   // callbacks
   const handleSheetChanges = useCallback((index: number) => {
     console.log("handleSheetChanges", index);
   }, []);
 
-  const { name, completed } = isViewingTask ?? {};
+  const activeExplainer = useMemo(
+    () => explainerObject[taskType as keyof typeof explainerObject],
+    [taskType]
+  );
 
   // renders
   return (
@@ -49,18 +74,7 @@ export const TaskBottomSheet = ({
             paddingHorizontal: 10,
           }}
         >
-          {!completed && (
-            <View
-              style={{
-                height: 20,
-                width: 20,
-                borderRadius: 10,
-                borderWidth: 1,
-                borderColor: Colors.light,
-                backgroundColor: "orange",
-              }}
-            ></View>
-          )}
+          <Text style={styles.taskTypText}>{taskType}</Text>
           <Ionicons
             name="close"
             color={Colors.light}
@@ -70,100 +84,13 @@ export const TaskBottomSheet = ({
             }}
           />
         </View>
-        <View style={{ paddingHorizontal: 10 }}>
-          <Text
-            style={{
-              color: Colors.light,
-              fontSize: 24,
-              fontFamily: SEMI_BOLD,
-              textAlign: "center",
-            }}
-          >
-            {name}
-          </Text>
-        </View>
-        <View style={{ paddingHorizontal: 10, width: "100%", gap: 5 }}>
-          <Text
-            style={{
-              color: Colors.light,
-              fontSize: 15,
-              fontFamily: SEMI_BOLD,
-              textAlign: "left",
-            }}
-          >
-            Description
-          </Text>
-          <View style={styles.descriptionContainer}></View>
-        </View>
-        <View style={{ paddingHorizontal: 10, width: "100%", gap: 5 }}>
-          <Text
-            style={{
-              color: Colors.light,
-              fontSize: 15,
-              fontFamily: SEMI_BOLD,
-              textAlign: "left",
-            }}
-          >
-            Remark
-          </Text>
-          <BottomSheetTextInput multiline={true} style={styles.input} />
-        </View>
-        <View style={{ paddingHorizontal: 10, gap: 5, width: "100%" }}>
-          <Text
-            style={{
-              color: Colors.light,
-              fontSize: 15,
-              fontFamily: SEMI_BOLD,
-              textAlign: "left",
-            }}
-          >
-            Attachments
-          </Text>
+        <View style={{ paddingHorizontal: 10, gap: 20 }}>
+          <Text style={styles.taskTypText}>{activeExplainer?.snippet}</Text>
           <View>
-            <Ionicons name="add" color={Colors.light} size={30} />
+            <Text style={{ color: Colors.light }}>Example</Text>
+            <Text style={styles.taskTypText}>{activeExplainer?.example}</Text>
           </View>
         </View>
-        <Pressable
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
-            width: "100%",
-            paddingHorizontal: 10,
-          }}
-        >
-          <Text
-            style={{
-              color: Colors.primary,
-              fontFamily: SEMI_BOLD,
-              fontSize: 20,
-            }}
-          >
-            Mark as completed
-          </Text>
-          <View
-            style={{
-              height: 22,
-              width: 60,
-              borderRadius: 10,
-              borderWidth: 1,
-              borderColor: Colors.light,
-              backgroundColor: "green",
-              justifyContent: "center",
-            }}
-          >
-            <View
-              style={{
-                height: 20,
-                width: 20,
-                borderRadius: 15,
-                borderWidth: 1,
-                borderColor: Colors.light,
-                backgroundColor: "white",
-              }}
-            ></View>
-          </View>
-        </Pressable>
       </BottomSheetView>
     </BottomSheet>
   );
@@ -179,13 +106,16 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flex: 1,
-    alignItems: "center",
     backgroundColor: Colors.darkGrey,
     gap: 20,
-    marginHorizontal: 10,
   },
   handle: {
     backgroundColor: Colors.light,
+  },
+  taskTypText: {
+    fontSize: 20,
+    color: Colors.light,
+    fontFamily: SEMI_BOLD,
   },
   input: {
     marginTop: 8,

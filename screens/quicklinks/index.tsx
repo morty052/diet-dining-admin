@@ -9,10 +9,8 @@ import React from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import Colors from "../../constants/colors";
-import { deleteKey } from "../../utils/secureStore";
-import { getItem, removeItem } from "../../utils/storage";
+import { getItem } from "../../utils/storage";
 import { useClerk } from "@clerk/clerk-expo";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 type QuickLinkProps = {
   title: string;
@@ -37,9 +35,9 @@ const quickLinksArray = [
     title: "Manage Orders",
   },
   {
-    link: "NotificationsManager",
-    icon: "notifications-outline",
-    title: "Notifications",
+    link: "DriverStack",
+    icon: "car-outline",
+    title: "Drivers",
   },
   {
     link: "IdentifyMealScreen",
@@ -76,26 +74,14 @@ const affiliateLinksArray = [
   },
 ];
 
-const Stack = createNativeStackNavigator();
-
 const AffiliateLinks = () => {
   const store_name = getItem("store_name");
 
   const _id = "RDy0NRgK4s4Oz2Kxq9tuZw";
 
-  const navigation = useNavigation();
-
-  const { signOut } = useClerk();
+  const navigation = useNavigation<any>();
 
   const handleLock = async () => {
-    // removeItem("affiliate");
-    // removeItem("firstname");
-    // removeItem("store_name");
-    // removeItem("affiliate_id");
-    // removeItem("admin_id");
-    // removeItem("admin");
-    // await signOut();
-    // @ts-ignore
     navigation.navigate("Unlock");
   };
 
@@ -154,9 +140,7 @@ const AffiliateLinks = () => {
 const AdminLinks = () => {
   const firstname = getItem("firstname");
 
-  const _id = "RDy0NRgK4s4Oz2Kxq9tuZw";
-
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
 
   function OnPress(title: string) {
     console.info("Pressed", title);
@@ -164,17 +148,7 @@ const AdminLinks = () => {
     navigation.navigate(title);
   }
 
-  const { signOut } = useClerk();
-
   const handleLock = async () => {
-    // removeItem("affiliate");
-    // removeItem("firstname");
-    // removeItem("store_name");
-    // removeItem("affiliate_id");
-    // removeItem("admin_id");
-    // removeItem("admin");
-    // await signOut();
-    // @ts-ignore
     navigation.navigate("Unlock");
   };
 
@@ -204,14 +178,9 @@ const AdminLinks = () => {
               />
             ))}
             <QuickLink
-              title={"Preview Store"}
-              icon={"eye"}
-              onPress={() =>
-                // @ts-ignore
-                navigation.navigate("PreviewStore", {
-                  _id,
-                })
-              }
+              title={"Projects"}
+              icon={"business"}
+              onPress={() => navigation.navigate("ProjectManagerStack")}
             />
           </View>
         </ScrollView>

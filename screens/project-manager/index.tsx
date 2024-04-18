@@ -9,19 +9,18 @@ import {
   Image,
 } from "react-native";
 import React from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
 import Colors from "../../constants/colors";
 import { SEMI_BOLD } from "../../constants/fontNames";
 import { Ionicons } from "@expo/vector-icons";
-import { TaskBottomSheet } from "./components/TaskBottomSheet";
 import { TaskItemProps } from "../../types/TaskItemProps";
-import BottomSheet from "@gorhom/bottom-sheet";
 import { StatusBar } from "expo-status-bar";
 import { useNavigation } from "@react-navigation/native";
 import Animated, { FadeInLeft, FadeOutLeft } from "react-native-reanimated";
 import { baseUrl } from "../../constants/baseUrl";
 import { useQuery } from "@tanstack/react-query";
 import { useRefreshOnFocus } from "../../hooks/useRefreshOnFocus";
+import TaskItem from "./components/TaskItem";
+import { useNewTask } from "../../models/newTask";
 
 type ProjectProps = {
   name: string;
@@ -290,6 +289,9 @@ const fetchProjects = async () => {
 };
 
 const getProgressPercentage = (project: any) => {
+  if (!project.tasks) {
+    return "0%";
+  }
   const completed = project.tasks?.filter((task: any) => task.completed).length;
   const progress = Math.floor((completed / project.tasks.length) * 100);
 
@@ -298,6 +300,7 @@ const getProgressPercentage = (project: any) => {
 
 const ProjectCard = ({ project }: { project: ProjectCardProps }) => {
   const { name, color, completion, _id, members, tasks } = project ?? {};
+  const navigation = useNavigation<any>();
 
   const progress = React.useMemo(
     () => getProgressPercentage(project),
@@ -305,7 +308,10 @@ const ProjectCard = ({ project }: { project: ProjectCardProps }) => {
   );
 
   return (
-    <View style={[styles.projectCardcontainer, { backgroundColor: color }]}>
+    <Pressable
+      onPress={() => navigation.navigate("ProjectScreen", { project })}
+      style={[styles.projectCardcontainer, { backgroundColor: color }]}
+    >
       <View style={{ gap: 10 }}>
         <Text style={{ color: "white", fontSize: 50, fontFamily: SEMI_BOLD }}>
           {progress}
@@ -332,81 +338,46 @@ const ProjectCard = ({ project }: { project: ProjectCardProps }) => {
           ))}
         </View>
       </View>
-    </View>
+    </Pressable>
   );
 };
 
-const TaskItem = ({
-  task,
-  project_color,
-}: {
-  task: TaskItemProps;
-  project_color: string;
-}) => {
-  const { name, type, completed } = task ?? {};
-  const navigation = useNavigation();
+function AddTaskView({ project_id }: { project_id: string }) {
+  const { setProject } = useNewTask();
+  const navigation = useNavigation<any>();
+
+  const handlePress = () => {
+    setProject(project_id);
+    navigation.navigate("CreateTaskRoutes");
+  };
+
   return (
-    <Animated.View exiting={FadeOutLeft} entering={FadeInLeft}>
+    <View
+      style={{
+        paddingHorizontal: 10,
+        paddingTop: 40,
+        justifyContent: "center",
+        alignItems: "center",
+        gap: 10,
+      }}
+    >
       <Pressable
-        onPress={() => {
-          // @ts-ignore
-          navigation.navigate("TaskScreen", {
-            task,
-          });
-        }}
         style={{
-          borderWidth: 1,
-          borderColor: Colors.light,
           padding: 10,
-          gap: 5,
+          backgroundColor: Colors.primary,
           borderRadius: 10,
         }}
+        onPress={handlePress}
       >
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-          {completed && (
-            <Ionicons
-              size={20}
-              color={Colors.light}
-              name={completed ? "checkmark-circle" : "checkmark"}
-            />
-          )}
-          {!completed && (
-            <View
-              style={{
-                height: 20,
-                width: 20,
-                borderRadius: 10,
-                borderWidth: 1,
-                borderColor: Colors.light,
-                backgroundColor: project_color,
-              }}
-            ></View>
-          )}
-          <Text
-            style={{
-              color: "white",
-              fontSize: 18,
-              flex: 1,
-              textDecorationLine: completed ? "line-through" : undefined,
-            }}
-          >
-            {name}
-          </Text>
-        </View>
-        <Text
-          style={{
-            color: "white",
-            fontSize: 12,
-            textAlign: "right",
-          }}
-        >
-          2 days ago
-        </Text>
+        <Text style={{ color: "white", fontSize: 24 }}>Add Task</Text>
       </Pressable>
-    </Animated.View>
+      <Text style={{ color: "white", fontSize: 18 }}>No tasks found</Text>
+    </View>
   );
-};
+}
 
+// TODO: Add search
+// TODO ADD CREATE TASK VIEW IF PROJECT HAS NO TASK
 export const ProjectManager = ({ navigation }: any) => {
   const [activeProject, setActiveProject] = React.useState(0);
   const projectGridRef = React.useRef<FlatList>(null);
@@ -415,6 +386,7 @@ export const ProjectManager = ({ navigation }: any) => {
     isLoading,
     refetch,
     data: projects,
+    isError,
   } = useQuery({
     queryKey: ["projects"],
     queryFn: fetchProjects,
@@ -423,7 +395,56 @@ export const ProjectManager = ({ navigation }: any) => {
   useRefreshOnFocus(refetch);
 
   if (isLoading) {
+    return (
+      <View style={{ flex: 1, backgroundColor: Colors.darkGrey }}>
+        <View
+          style={{
+            // backgroundColor: "red",
+            // position: "absolute",
+            bottom: Platform.select({ ios: 20, android: 0 }),
+            left: 0,
+            right: 0,
+            justifyContent: "center",
+            alignContent: "center",
+            flexDirection: "row",
+          }}
+        >
+          <Ionicons
+            onPress={() => navigation.navigate("CreateProject")}
+            color={Colors.danger}
+            size={70}
+            name="add-circle-outline"
+          />
+        </View>
+      </View>
+    );
     return null;
+  }
+
+  if (isError) {
+    return (
+      <View style={{ flex: 1, backgroundColor: Colors.darkGrey }}>
+        <View
+          style={{
+            // backgroundColor: "red",
+            // position: "absolute",
+            bottom: Platform.select({ ios: 20, android: 0 }),
+            left: 0,
+            right: 0,
+            justifyContent: "center",
+            alignContent: "center",
+            flexDirection: "row",
+          }}
+        >
+          <Ionicons
+            onPress={() => navigation.navigate("CreateProject")}
+            color={Colors.danger}
+            size={70}
+            name="add-circle-outline"
+          />
+        </View>
+      </View>
+    );
   }
 
   return (
@@ -446,9 +467,14 @@ export const ProjectManager = ({ navigation }: any) => {
           />
         </View>
         {/* TASKS */}
-        <View style={{ paddingHorizontal: 10 }}>
-          <Text style={styles.headerText}>Tasks</Text>
-        </View>
+        {projects[activeProject].tasks && (
+          <View style={{ paddingHorizontal: 10 }}>
+            <Text style={styles.headerText}>Tasks</Text>
+          </View>
+        )}
+        {!projects[activeProject].tasks && (
+          <AddTaskView project_id={projects[activeProject]._id} />
+        )}
         <ScrollView
           contentContainerStyle={{
             paddingBottom: 80,

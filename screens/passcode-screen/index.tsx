@@ -28,6 +28,7 @@ const PassCodeScreen = ({ navigation }) => {
     });
     if (res.success) {
       setUnlocked(true);
+      // SET AFFILIATE PARAM TO TRUE ON QUICKLINK SCREEN
       if (isAffiliate) {
         return navigation.navigate("QuickLinks", {
           isAffiliate: true,
@@ -37,7 +38,11 @@ const PassCodeScreen = ({ navigation }) => {
       navigation.navigate("QuickLinks");
     }
 
-    console.log(res);
+    // TODO REMOVE THIS LINE OF CODE ONLY HERE FOR ANDROID SIMULATOR
+    if (res.error == "not_enrolled") {
+      console.log(res.error);
+      navigation.navigate("QuickLinks");
+    }
   }
 
   // if (!unlocked) {

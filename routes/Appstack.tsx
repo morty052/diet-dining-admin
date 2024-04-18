@@ -27,6 +27,7 @@ import RegisterScreen from "../screens/onboarding-screens/RegisterScreen";
 import { ConfirmOtpScreen } from "../screens/onboarding-screens/ConfirmOtpScreen";
 import SettingsButton from "../components/ui/SettingsButton";
 import ProjectManagerStack from "./ProjectManagerStack";
+import DriverStack from "./DriverStack";
 
 type rootStackParams = {
   Home: undefined;
@@ -55,6 +56,7 @@ type rootStackParams = {
     _id: string;
   };
   ProjectManagerStack: undefined;
+  DriverStack: undefined;
 };
 
 const Stack = createNativeStackNavigator<rootStackParams>();
@@ -217,13 +219,19 @@ const Appstack = ({
       />
       <Stack.Screen
         options={{
-          // header: () => <NavBar minimal />,
-          // headerTransparent: true,
           headerTitle: "",
           headerShown: false,
         }}
         name="ProjectManagerStack"
         component={ProjectManagerStack}
+      />
+      <Stack.Screen
+        options={{
+          headerTitle: "",
+          headerShown: false,
+        }}
+        name="DriverStack"
+        component={DriverStack}
       />
     </Stack.Navigator>
   );

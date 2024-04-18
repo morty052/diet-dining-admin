@@ -8,6 +8,7 @@ const Colors = {
   accent: "rgba(144,196,102/0.3)",
   link: "rgb(37 99 235)",
   danger: "rgb(239 68 68)",
+  muted: "rgba(255, 255, 255, 0.5)",
 };
 
 export default Colors;

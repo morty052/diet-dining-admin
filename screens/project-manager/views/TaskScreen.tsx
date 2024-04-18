@@ -9,7 +9,6 @@ import {
 import React from "react";
 import Colors from "../../../constants/colors";
 import { SEMI_BOLD } from "../../../constants/fontNames";
-import { Ionicons } from "@expo/vector-icons";
 import ReminderButton from "../components/ReminderButton";
 import AttachmentButtons from "../components/AttachmentButtons";
 import MemberButtons from "../components/MemberButtons";
