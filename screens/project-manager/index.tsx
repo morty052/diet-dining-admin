@@ -21,6 +21,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useRefreshOnFocus } from "../../hooks/useRefreshOnFocus";
 import TaskItem from "./components/TaskItem";
 import { useNewTask } from "../../models/newTask";
+import LoadingScreen from "../../components/ui/LoadingScreen";
 
 type ProjectProps = {
   name: string;
@@ -40,7 +41,7 @@ type ProjectCardProps = {
   tasks: TaskItemProps[];
 };
 
-// const projectsArray: ProjectProps[] = [
+// const projects: ProjectProps[] = [
 //   {
 //     name: "Get payment provider",
 //     color: "indigo",
@@ -63,7 +64,7 @@ type ProjectCardProps = {
 //         name: "Decide on Provider",
 //         completed: true,
 //         _id: "string",
-//         type: "POLL",
+//         type: "REVIEW",
 //         description:
 //           "Review available payment providers to find most suitable one",
 //         members: [
@@ -377,7 +378,6 @@ function AddTaskView({ project_id }: { project_id: string }) {
 }
 
 // TODO: Add search
-// TODO ADD CREATE TASK VIEW IF PROJECT HAS NO TASK
 export const ProjectManager = ({ navigation }: any) => {
   const [activeProject, setActiveProject] = React.useState(0);
   const projectGridRef = React.useRef<FlatList>(null);
@@ -395,57 +395,34 @@ export const ProjectManager = ({ navigation }: any) => {
   useRefreshOnFocus(refetch);
 
   if (isLoading) {
-    return (
-      <View style={{ flex: 1, backgroundColor: Colors.darkGrey }}>
-        <View
-          style={{
-            // backgroundColor: "red",
-            // position: "absolute",
-            bottom: Platform.select({ ios: 20, android: 0 }),
-            left: 0,
-            right: 0,
-            justifyContent: "center",
-            alignContent: "center",
-            flexDirection: "row",
-          }}
-        >
-          <Ionicons
-            onPress={() => navigation.navigate("CreateProject")}
-            color={Colors.danger}
-            size={70}
-            name="add-circle-outline"
-          />
-        </View>
-      </View>
-    );
-    return null;
+    return <LoadingScreen />;
   }
 
-  if (isError) {
-    return (
-      <View style={{ flex: 1, backgroundColor: Colors.darkGrey }}>
-        <View
-          style={{
-            // backgroundColor: "red",
-            // position: "absolute",
-            bottom: Platform.select({ ios: 20, android: 0 }),
-            left: 0,
-            right: 0,
-            justifyContent: "center",
-            alignContent: "center",
-            flexDirection: "row",
-          }}
-        >
-          <Ionicons
-            onPress={() => navigation.navigate("CreateProject")}
-            color={Colors.danger}
-            size={70}
-            name="add-circle-outline"
-          />
-        </View>
-      </View>
-    );
-  }
+  // if (isError) {
+  //   return (
+  //     <View style={{ flex: 1, backgroundColor: Colors.darkGrey }}>
+  //       <View
+  //         style={{
+  //           // backgroundColor: "red",
+  //           // position: "absolute",
+  //           bottom: Platform.select({ ios: 20, android: 0 }),
+  //           left: 0,
+  //           right: 0,
+  //           justifyContent: "center",
+  //           alignContent: "center",
+  //           flexDirection: "row",
+  //         }}
+  //       >
+  //         <Ionicons
+  //           onPress={() => navigation.navigate("CreateProject")}
+  //           color={Colors.danger}
+  //           size={70}
+  //           name="add-circle-outline"
+  //         />
+  //       </View>
+  //     </View>
+  //   );
+  // }
 
   return (
     <View style={{ flex: 1, backgroundColor: Colors.darkGrey }}>
@@ -488,6 +465,7 @@ export const ProjectManager = ({ navigation }: any) => {
             data={projects[activeProject].tasks}
             renderItem={({ item }) => (
               <TaskItem
+                project={projects[activeProject]._id}
                 project_color={projects[activeProject].color}
                 task={item}
               />

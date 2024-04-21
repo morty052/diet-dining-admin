@@ -161,7 +161,7 @@ const AdminLinks = () => {
         paddingBottom: 24,
       }}
     >
-      <View className="flex-1">
+      <View className="flex-1 px-2">
         <View className="px-2">
           <Text className="text-2xl text-gray-50 font-medium">
             Welcome {firstname}

@@ -15,28 +15,53 @@ import MemberButtons from "../components/MemberButtons";
 import SuggestionsGrid from "../components/SuggestionsGrid";
 import { TaskItemProps } from "../../../types/TaskItemProps";
 import ReviewSection from "../components/ReviewSection";
+import { baseUrl } from "../../../constants/baseUrl";
+import { getItem } from "../../../utils/storage";
 
 type Props = {};
+
+async function completeTask({
+  project,
+  task,
+}: {
+  project: string;
+  task: string | number;
+}) {
+  const admin = getItem("admin_id");
+  const res = await fetch(
+    `${baseUrl}/admin/complete-task?project=${project}&task=${task}&admin=${admin}`
+  );
+  const data = await res.json();
+  return data;
+}
 
 const TaskScreen = ({ route }: any) => {
   const [isStarted, setIsStarted] = React.useState(false);
   const [isCompleted, setisCompleted] = React.useState(false);
 
-  const toggleStarted = () => setIsStarted((previousState) => !previousState);
-  const toggleComplete = () =>
-    setisCompleted((previousState) => !previousState);
-
-  const { task } = route.params;
+  const { task, project } = route.params;
   const {
     name,
     type,
-    completed,
+    status,
     description,
     members,
     attachments,
+    _key,
   }: TaskItemProps = task ?? {};
 
-  console.info(members);
+  const { completed, pending, in_progress } = status;
+
+  const toggleStarted = () => setIsStarted((previousState) => !previousState);
+  const toggleComplete = async (value: boolean) => {
+    setisCompleted((previousState) => !previousState);
+
+    if (value) {
+      console.info("value is true");
+      const res = await completeTask({ project, task: _key });
+    }
+    return;
+  };
 
   return (
     <ScrollView
@@ -102,7 +127,7 @@ const TaskScreen = ({ route }: any) => {
             trackColor={{ false: "#767577", true: Colors.primary }}
             thumbColor={isCompleted ? "white" : "#f4f3f4"}
             //   ios_backgroundColor="#3e3e3e"
-            onValueChange={toggleComplete}
+            onValueChange={(value) => toggleComplete(value)}
             value={isCompleted}
           />
         </View>

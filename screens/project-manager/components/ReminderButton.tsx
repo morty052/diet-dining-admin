@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { StyleSheet, View, Text, Button, Platform } from "react-native";
 import * as Calendar from "expo-calendar";
 import Colors from "../../../constants/colors";
-import { getItem, setItem } from "../../../utils/storage";
+import { getItem, removeItem, setItem } from "../../../utils/storage";
 import { day } from "../../../utils/day";
 import { Ionicons } from "@expo/vector-icons";
 import { SEMI_BOLD } from "../../../constants/fontNames";
@@ -61,16 +61,11 @@ export default function ReminderButton({
       <View style={styles.buttonContainer}>
         <Ionicons
           color={Colors.light}
-          onPress={
-            () =>
-              // createReminder({
-              //   title,
-              //   notes,
-              //   startDate: new Date().toISOString(),
-              // })
-              setOpen(true)
-            // createCalendar()
-          }
+          onPress={async () => {
+            setOpen(true);
+            // const CALENDAR_ID = getItem("CALENDAR_ID");
+            // await deleteCalendar(CALENDAR_ID);
+          }}
           size={30}
           name="calendar-outline"
         />
@@ -83,7 +78,7 @@ export default function ReminderButton({
           setOpen(false);
           setDate(date);
           console.log(date);
-          createReminder({
+          await createReminder({
             title,
             notes,
             startDate: date.toISOString(),
@@ -134,22 +129,26 @@ async function createReminder({
   notes: string;
   startDate: Date | string;
 }) {
+  console.log("creating reminder");
+
+  if (!getItem("CALENDAR_ID")) {
+    console.log("no CALENDAR_ID");
+    await createCalendar();
+  }
   const CALENDAR_ID = getItem("CALENDAR_ID");
   const tomoro = day().add(1, "minute").toISOString();
-  const { status } = await Calendar.requestCalendarPermissionsAsync();
-  if (status === "granted") {
-    const Event_ID = await Calendar.createEventAsync(CALENDAR_ID as string, {
-      notes,
-      startDate,
-      alarms: [{ relativeOffset: 0, method: Calendar.AlarmMethod.ALERT }],
-      endDate: tomoro,
-      title,
-    });
-    console.log(Event_ID);
-  }
+  const Event_ID = await Calendar.createEventAsync(CALENDAR_ID as string, {
+    notes,
+    startDate,
+    alarms: [{ relativeOffset: 0, method: Calendar.AlarmMethod.ALERT }],
+    endDate: tomoro,
+    title,
+  });
+  console.log(Event_ID);
 }
 
 async function deleteCalendar(id: string) {
+  removeItem("CALENDAR_ID");
   await Calendar.deleteCalendarAsync(id);
   console.log("deleted");
 }

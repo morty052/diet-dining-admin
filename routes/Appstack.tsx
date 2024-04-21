@@ -175,10 +175,11 @@ const Appstack = ({
 
       <Stack.Screen
         options={{
-          headerLeft: () => <BackButton />,
-          headerTitleAlign: "center",
-          title: "Store Manager",
-          headerTitleStyle: { color: "white" },
+          // headerLeft: () => <BackButton />,
+          // headerTitleAlign: "center",
+          // title: "Store Manager",
+          // headerTitleStyle: { color: "white" },
+          headerShown: false,
         }}
         name="StoresManager"
         component={StoresManager}

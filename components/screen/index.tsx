@@ -13,7 +13,7 @@ export const Screen = ({ children }: Props) => {
         backgroundColor: Colors.darkGrey,
         flex: 1,
         paddingHorizontal: 8,
-        paddingVertical: 24,
+        // paddingVertical: 24,
       }}
     >
       {children}

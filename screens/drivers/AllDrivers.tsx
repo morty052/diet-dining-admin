@@ -12,6 +12,8 @@ import Colors from "../../constants/colors";
 import { Ionicons } from "@expo/vector-icons";
 import { baseUrl } from "../../constants/baseUrl";
 import { useQuery } from "@tanstack/react-query";
+import LoadingScreen from "../../components/ui/LoadingScreen";
+import { useRefreshOnFocus } from "../../hooks/useRefreshOnFocus";
 
 type Props = {};
 
@@ -26,16 +28,20 @@ async function getVerifiedDrivers() {
 }
 
 const AllDrivers = ({ navigation }: any) => {
-  const { data: drivers, isLoading } = useQuery({
+  const {
+    data: drivers,
+    isLoading,
+    refetch,
+  } = useQuery({
     queryKey: ["Verified_drivers"],
     queryFn: getVerifiedDrivers,
   });
 
-  if (isLoading) {
-    return null;
-  }
+  useRefreshOnFocus(refetch);
 
-  console.info(drivers);
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
 
   return (
     <View style={styles.container}>

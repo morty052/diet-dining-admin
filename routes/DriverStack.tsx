@@ -7,6 +7,7 @@ import NewDrivers from "../screens/drivers/NewDrivers";
 import BackButton from "../components/ui/BackButton";
 import Colors from "../constants/colors";
 import DriverProfile from "../screens/drivers/DriverProfile";
+import { Ionicons } from "@expo/vector-icons";
 
 type Props = {};
 
@@ -19,15 +20,37 @@ const DriverTabs = (props: Props) => {
       screenOptions={{
         headerShown: false,
         tabBarStyle: { backgroundColor: Colors.darkGrey },
+        tabBarLabelStyle: {
+          fontSize: 12,
+        },
+        tabBarActiveTintColor: Colors.primary,
       }}
     >
       <Tabs.Screen
         name="AllDrivers"
-        options={{ tabBarLabel: "Verified" }}
+        options={{
+          tabBarLabel: "Verified",
+          tabBarIcon: ({ focused }) => (
+            <Ionicons
+              name="checkmark-circle-outline"
+              size={24}
+              color={!focused ? "white" : Colors.primary}
+            />
+          ),
+        }}
         component={AllDrivers}
       />
       <Tabs.Screen
-        options={{ tabBarLabel: "Unverified" }}
+        options={{
+          tabBarLabel: "Unverified",
+          tabBarIcon: ({ focused }) => (
+            <Ionicons
+              name="ban"
+              size={24}
+              color={!focused ? "white" : Colors.primary}
+            />
+          ),
+        }}
         name="NewDrivers"
         component={NewDrivers}
       />
@@ -42,7 +65,7 @@ const DriverStack = (props: Props) => {
         options={{
           headerLeft: () => <BackButton />,
           headerTitleAlign: "center",
-          title: "Driver",
+          title: "Drivers",
           headerTitleStyle: { color: "white" },
           headerShown: true,
           headerStyle: {
@@ -55,6 +78,7 @@ const DriverStack = (props: Props) => {
       <Stack.Screen
         options={{
           headerLeft: () => <BackButton />,
+          headerRight: () => <BackButton />,
           headerTitleAlign: "center",
           title: "",
           headerTitleStyle: { color: "white" },

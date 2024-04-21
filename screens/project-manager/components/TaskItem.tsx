@@ -8,11 +8,14 @@ import { Ionicons } from "@expo/vector-icons";
 const TaskItem = ({
   task,
   project_color,
+  project,
 }: {
   task: TaskItemProps;
   project_color: string;
+  project: string;
 }) => {
-  const { name, type, completed } = task ?? {};
+  const { name, type, status } = task ?? {};
+  const { completed } = status ?? {};
   const navigation = useNavigation();
   return (
     <Animated.View exiting={FadeOutLeft} entering={FadeInLeft}>
@@ -21,6 +24,7 @@ const TaskItem = ({
           // @ts-ignore
           navigation.navigate("TaskScreen", {
             task,
+            project,
           });
         }}
         style={{

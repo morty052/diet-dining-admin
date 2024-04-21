@@ -3,9 +3,13 @@ import { memberProps } from "./MemberProps";
 export type TaskItemProps = {
   type: "POLL" | "ACTION" | "EVENT" | "REVIEW";
   name: string;
-  completed?: boolean;
+  status: {
+    completed: boolean;
+    pending: boolean;
+    in_progress: boolean;
+  };
   inProgress?: boolean;
-  _id: string | number;
+  _key: string | number;
   description: string;
   members: memberProps[];
   attachments?: {
