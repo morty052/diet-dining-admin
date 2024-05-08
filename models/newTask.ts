@@ -11,6 +11,11 @@ type newTaskProps = {
   due_date: string;
   type: Partial<TaskItemProps["type"]>;
   suggestions?: string[];
+  attachments?: {
+    attached_files?: { file: string; title: string }[];
+    attached_images?: { image: string; title: string }[];
+    links?: { link: string; title: string }[];
+  };
   setProject: (project: string) => void;
   setName: (name: string) => void;
   setDescription: (description: string) => void;
@@ -28,6 +33,11 @@ export const useNewTask = create<newTaskProps>((set, state) => ({
   members: [],
   due_date: "",
   type: "ACTION",
+  attachments: {
+    attached_files: [],
+    attached_images: [],
+    links: [],
+  },
   setProject: (project) => {
     set(() => ({ project }));
     console.info(state().project);
@@ -88,3 +98,80 @@ export const useNewTask = create<newTaskProps>((set, state) => ({
     return _id;
   },
 }));
+
+const attachments = {
+  name: "attachments",
+  title: "Attachments",
+  type: "object",
+  fields: [
+    {
+      name: "attached_files",
+      title: "Attached Files",
+      type: "array",
+      of: [
+        {
+          type: "object",
+          name: "files",
+          fields: [
+            {
+              name: "file",
+              title: "file",
+              type: "file",
+            },
+            {
+              name: "title",
+              title: "Title",
+              type: "string",
+            },
+          ],
+        },
+      ],
+    },
+    {
+      name: "links",
+      title: "Links",
+      type: "array",
+      of: [
+        {
+          type: "object",
+          name: "link",
+          fields: [
+            {
+              name: "link",
+              title: "Link",
+              type: "string",
+            },
+            {
+              name: "title",
+              title: "Title",
+              type: "string",
+            },
+          ],
+        },
+      ],
+    },
+    {
+      name: "attached_images",
+      title: "Attached Images",
+      type: "array",
+      of: [
+        {
+          type: "object",
+          name: "images",
+          fields: [
+            {
+              name: "image",
+              title: "Image",
+              type: "image",
+            },
+            {
+              name: "title",
+              title: "Title",
+              type: "string",
+            },
+          ],
+        },
+      ],
+    },
+  ],
+};

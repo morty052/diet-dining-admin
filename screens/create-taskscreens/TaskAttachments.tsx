@@ -26,11 +26,13 @@ function AttachmentButton({
 
 const TaskAttachments = ({ navigation }: any) => {
   const [attachmentType, setAttachmentType] = React.useState("");
+  const [modalOpen, setModalOpen] = React.useState(false);
   const bottomSheetRef = React.useRef<BottomSheet>(null);
 
   function handleOpen(type: string) {
     setAttachmentType(type);
     bottomSheetRef.current?.snapToIndex(0);
+    setModalOpen(true);
   }
 
   return (
@@ -51,6 +53,8 @@ const TaskAttachments = ({ navigation }: any) => {
       </View>
       <ControlButtons handlePress={() => navigation.navigate("TaskDueDate")} />
       <TaskAttachmentSheet
+        modalOpen={modalOpen}
+        setModalOpen={setModalOpen}
         attachmentType={attachmentType}
         bottomSheetRef={bottomSheetRef}
       />

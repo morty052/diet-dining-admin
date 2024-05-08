@@ -198,8 +198,13 @@ const RemarkModal = ({
   );
 };
 
-const ReviewSection = (props: Props) => {
-  const [remark, setRemark] = React.useState("");
+const ReviewSection = ({
+  remark,
+  setRemark,
+}: {
+  remark: string;
+  setRemark: React.Dispatch<React.SetStateAction<string>>;
+}) => {
   const [remarksArray, setRemarksArray] = React.useState<string[]>([]);
   const [remarksModalOpen, setRemarksModalOpen] = React.useState(true);
   const [activeRemark, setActiveRemark] = React.useState("");
@@ -219,7 +224,7 @@ const ReviewSection = (props: Props) => {
   };
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView style={styles.container}>
       <Text style={styles.titleText}>Remarks</Text>
       {/* <ScrollView contentContainerStyle={{ gap: 10 }} horizontal>
         {remarksArray.map((remark, index) => (
@@ -241,9 +246,11 @@ const ReviewSection = (props: Props) => {
           multiline
           style={styles.remarkContainer}
         />
-        {/* <Pressable onPress={addRemark} style={styles.submitButton}>
-          <Text style={styles.titleText}>Submit</Text>
-        </Pressable> */}
+        {/* {remark && (
+          <Pressable onPress={addRemark} style={styles.submitButton}>
+            <Text style={styles.titleText}>Submit</Text>
+          </Pressable>
+        )} */}
       </KeyboardAvoidingView>
       {/* <Text style={[styles.titleText, { marginTop: 20 }]}>
         Satisfaction rating
@@ -267,7 +274,7 @@ const ReviewSection = (props: Props) => {
         handleClose={closeRemarkModal}
         remark={activeRemark}
       /> */}
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 

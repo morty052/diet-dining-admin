@@ -36,10 +36,7 @@ function TaskInfo({ navigation }: any) {
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.select({ ios: "padding", android: "height" })}
-      style={styles.container}
-    >
+    <View style={styles.container}>
       <View style={{ gap: 20 }}>
         <View>
           <Text
@@ -63,9 +60,9 @@ function TaskInfo({ navigation }: any) {
           </Text>
         </View>
         <TextInput
+          autoFocus
           value={taskName}
           onChangeText={(text) => setTaskName(text)}
-          autoFocus
           placeholderTextColor={Colors.muted}
           placeholder="Task Name"
           style={styles.input}
@@ -82,8 +79,12 @@ function TaskInfo({ navigation }: any) {
           ]}
         />
       </View>
-      <ControlButtons handlePress={handlePress} />
-    </KeyboardAvoidingView>
+      <KeyboardAvoidingView
+        behavior={Platform.select({ ios: "padding", android: "height" })}
+      >
+        <ControlButtons handlePress={handlePress} />
+      </KeyboardAvoidingView>
+    </View>
   );
 }
 

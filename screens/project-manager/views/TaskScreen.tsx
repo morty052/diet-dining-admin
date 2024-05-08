@@ -23,13 +23,24 @@ type Props = {};
 async function completeTask({
   project,
   task,
+  type,
+  remark,
 }: {
   project: string;
   task: string | number;
+  type: Partial<TaskItemProps["type"]>;
+  remark?: string;
 }) {
   const admin = getItem("admin_id");
   const res = await fetch(
-    `${baseUrl}/admin/complete-task?project=${project}&task=${task}&admin=${admin}`
+    `${baseUrl}/admin/complete-task?project=${project}&task=${task}&admin=${admin}`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ type, task, project, admin, remark }),
+    }
   );
   const data = await res.json();
   return data;
@@ -38,6 +49,7 @@ async function completeTask({
 const TaskScreen = ({ route }: any) => {
   const [isStarted, setIsStarted] = React.useState(false);
   const [isCompleted, setisCompleted] = React.useState(false);
+  const [remark, setRemark] = React.useState("");
 
   const { task, project } = route.params;
   const {
@@ -50,7 +62,7 @@ const TaskScreen = ({ route }: any) => {
     _key,
   }: TaskItemProps = task ?? {};
 
-  const { completed, pending, in_progress } = status;
+  const { completed, pending, in_progress } = status ?? {};
 
   const toggleStarted = () => setIsStarted((previousState) => !previousState);
   const toggleComplete = async (value: boolean) => {
@@ -58,7 +70,7 @@ const TaskScreen = ({ route }: any) => {
 
     if (value) {
       console.info("value is true");
-      const res = await completeTask({ project, task: _key });
+      const res = await completeTask({ project, task: _key, type, remark });
     }
     return;
   };
@@ -76,7 +88,9 @@ const TaskScreen = ({ route }: any) => {
       <MemberButtons members={members} />
       <AttachmentButtons attachments={attachments} />
       {type == "POLL" && <SuggestionsGrid />}
-      {type == "REVIEW" && <ReviewSection />}
+      {type == "REVIEW" && (
+        <ReviewSection remark={remark} setRemark={setRemark} />
+      )}
       <View style={{ gap: 20, paddingTop: 10, zIndex: 1 }}>
         <ReminderButton
           title={name}
