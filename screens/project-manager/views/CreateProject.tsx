@@ -25,6 +25,7 @@ import BottomSheet from "@gorhom/bottom-sheet/lib/typescript/components/bottomSh
 import { ControlButtons } from "../../../components";
 import { useNewProject } from "../../../models/newProject";
 import DatePicker from "react-native-date-picker";
+import { useNewTask } from "../../../models/newTask";
 
 const Stack = createNativeStackNavigator();
 
@@ -373,13 +374,15 @@ function AddProjectMembers({ navigation }: any) {
             />
           ))}
         </View>
-        {queryResults?.map((admin: memberProps) => (
-          <AdminCard
-            onSelect={(admin) => handleSelect(admin)}
-            admin={admin}
-            key={admin._id}
-          />
-        ))}
+        <ScrollView contentContainerStyle={{ gap: 10 }}>
+          {queryResults?.map((admin: memberProps) => (
+            <AdminCard
+              onSelect={(admin) => handleSelect(admin)}
+              admin={admin}
+              key={admin._id}
+            />
+          ))}
+        </ScrollView>
       </View>
       <ControlButtons handlePress={handleContinue} />
     </View>
@@ -439,7 +442,15 @@ function ProjectDeadline({ navigation }: any) {
   );
 }
 
-function ProjectCreatedScreen({ navigation }: any) {
+function ProjectCreatedScreen({ navigation, route }: any) {
+  const { _id } = route.params;
+  const { setProject } = useNewTask();
+
+  function handleAddTask() {
+    setProject(_id);
+    navigation.navigate("CreateTaskRoutes");
+  }
+
   return (
     <View
       style={{
@@ -476,7 +487,7 @@ function ProjectCreatedScreen({ navigation }: any) {
           </Text>
         </View>
         <Pressable
-          onPress={() => navigation.navigate("CreateTaskRoutes")}
+          onPress={handleAddTask}
           style={{
             backgroundColor: Colors.primary,
             padding: 10,
@@ -489,16 +500,18 @@ function ProjectCreatedScreen({ navigation }: any) {
             Setup Tasks
           </Text>
         </Pressable>
-        <Text
-          style={{
-            fontWeight: "normal",
-            color: Colors.muted,
-            fontSize: 20,
-            textAlign: "center",
-          }}
-        >
-          Skip for now
-        </Text>
+        <Pressable onPress={() => navigation.navigate("Projects")}>
+          <Text
+            style={{
+              fontWeight: "normal",
+              color: Colors.muted,
+              fontSize: 20,
+              textAlign: "center",
+            }}
+          >
+            Skip for now
+          </Text>
+        </Pressable>
       </View>
     </View>
   );

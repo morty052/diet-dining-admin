@@ -58,71 +58,37 @@ export function ConfirmOtpScreen({ route, navigation }: any) {
       });
     }
 
-    if (isAdmin) {
-      try {
-        const expo_push_token = await getValueFor("expo_push_token");
-        const email = emailAddress.trim();
-        const url = `${baseUrl}/admin/register-companion?admin_email=${email}&expo_push_token=${expo_push_token}`;
-        // const url = `http://localhost:3000/admin/register-companion?admin_email=${emailAddress}&expo_push_token=${expo_push_token}`;
-        const res = await fetch(url);
-        const data = await res.json();
-        const { _id, firstname, status } = data;
-        console.log(data);
-        if (status == "CONFIRMED") {
-          setItem("admin_id", _id);
-          setItem("firstname", firstname);
-          setItem("ONBOARDED", "TRUE");
-          setItem("admin", "TRUE");
-          setLoading(false);
-          setOTP("");
-          // * REMOVE THE SIGNED OUT ITEM THAT TRIGGERS NAVIGATION BACK TO LOGIN SCREEN
-          removeItem("SignedOut");
-          return navigation.navigate("Unlock");
-        }
-
-        if (status == "REJECTED") {
-          console.log(status);
-          setLoading(false);
-          throw new Error("Something went wrong");
-        }
-      } catch (error) {
-        console.error(error);
-        setError("Something went wrong");
-        setLoading(false);
-      }
-    }
-
     try {
       const expo_push_token = await getValueFor("expo_push_token");
-
       const email = emailAddress.trim();
-
-      const url = `${baseUrl}/affiliates/register-companion?affiliate_email=${email}&expo_push_token=${expo_push_token}`;
-      // const url = `http://localhost:3000/affiliates/register-companion?affiliate_email=${emailAddress}&expo_push_token=${expo_push_token}`;
+      const url = `${baseUrl}/admin/register-companion?admin_email=${email}&expo_push_token=${expo_push_token}`;
+      // const url = `http://localhost:3000/admin/register-companion?admin_email=${emailAddress}&expo_push_token=${expo_push_token}`;
       const res = await fetch(url);
       const data = await res.json();
-      const { _id, store_name, status } = data;
-
+      const { _id, firstname, status, admin_avatar } = data;
+      console.log(data);
       if (status == "CONFIRMED") {
-        setItem("affiliate_id", _id);
+        setItem("admin_id", _id);
+        setItem("firstname", firstname);
+        setItem("admin_avatar", admin_avatar);
         setItem("ONBOARDED", "TRUE");
-        setItem("store_name", store_name);
-        setItem("affiliate", "TRUE");
+        setItem("admin", "TRUE");
         setLoading(false);
         setOTP("");
         // * REMOVE THE SIGNED OUT ITEM THAT TRIGGERS NAVIGATION BACK TO LOGIN SCREEN
         removeItem("SignedOut");
-        navigation.navigate("Unlock");
+        return navigation.navigate("Unlock");
       }
 
       if (status == "REJECTED") {
+        console.log(status);
         setLoading(false);
         throw new Error("Something went wrong");
       }
     } catch (error) {
       console.error(error);
-      setLoading(false);
       setError("Something went wrong");
+      setLoading(false);
     }
   }
 

@@ -307,7 +307,14 @@ const StoreView = ({ route }: any) => {
         source={{ uri: store_image }}
       />
       <ListItem title="Name" value={store_name} />
-      <ListItem title="Address" value={store.store_address.street} />
+      <ListItem
+        title="Address"
+        value={
+          store?.store_address?.street
+            ? store?.store_address?.street
+            : "Not provided"
+        }
+      />
       <ListItem title="Email" value={"Hardcoded@mail.com"} />
       <ListItem title="Phone" value={"+1234566789"} />
       <ListItem title="Status" value={verified ? "Verified" : "Not Verified"} />

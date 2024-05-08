@@ -46,97 +46,6 @@ const quickLinksArray = [
   },
 ];
 
-const affiliateLinksArray = [
-  {
-    link: "GenerateOtp",
-    icon: "lock-closed-outline",
-    title: "Generate OTP",
-  },
-  {
-    link: "AffiliateStoreManager",
-    icon: "storefront-outline",
-    title: "Manage Store",
-  },
-  {
-    link: "OrdersManager",
-    icon: "bag-outline",
-    title: "Manage Orders",
-  },
-  {
-    link: "NotificationsManager",
-    icon: "notifications-outline",
-    title: "Notifications",
-  },
-  {
-    link: "IdentifyMealScreen",
-    icon: "cloud-outline",
-    title: "Genie",
-  },
-];
-
-const AffiliateLinks = () => {
-  const store_name = getItem("store_name");
-
-  const _id = "RDy0NRgK4s4Oz2Kxq9tuZw";
-
-  const navigation = useNavigation<any>();
-
-  const handleLock = async () => {
-    navigation.navigate("Unlock");
-  };
-
-  function OnPress(title: string) {
-    console.info("Pressed", title);
-    // @ts-ignore
-    navigation.navigate(title);
-  }
-
-  return (
-    <View
-      style={{
-        backgroundColor: Colors.darkGrey,
-        flex: 1,
-        paddingTop: 8,
-        paddingBottom: 24,
-        paddingHorizontal: 8,
-      }}
-    >
-      <View className="flex-1">
-        <View className="px-2">
-          <Text className="text-2xl text-gray-50 font-medium ">
-            {store_name}
-          </Text>
-        </View>
-        <ScrollView>
-          <View className={styles.quickLinksContainer}>
-            {affiliateLinksArray.map((qlink) => (
-              <QuickLink
-                key={qlink.title}
-                title={qlink.title}
-                icon={qlink.icon}
-                onPress={() => OnPress(qlink.link)}
-              />
-            ))}
-            <QuickLink
-              title={"Preview Store"}
-              icon={"eye"}
-              onPress={() =>
-                // @ts-ignore
-                navigation.navigate("PreviewStore", {
-                  _id,
-                })
-              }
-            />
-          </View>
-        </ScrollView>
-      </View>
-      <TouchableOpacity onPress={handleLock} className={styles.button}>
-        <Text className="text-2xl font-medium">Lock</Text>
-      </TouchableOpacity>
-    </View>
-  );
-};
-
 const AdminLinks = () => {
   const firstname = getItem("firstname");
 
@@ -157,7 +66,7 @@ const AdminLinks = () => {
       style={{
         backgroundColor: Colors.darkGrey,
         flex: 1,
-        paddingTop: 8,
+        paddingTop: 12,
         paddingBottom: 24,
       }}
     >
@@ -205,12 +114,8 @@ const QuickLink = ({ title, icon, onPress }: QuickLinkProps) => {
 };
 
 export const QuickLinks = ({ route }: any) => {
-  const { isAffiliate } = route.params ?? {};
-
-  if (isAffiliate) {
-    return <AffiliateLinks />;
-  }
-
+  const avatar = getItem("avatar");
+  console.info(avatar);
   return <AdminLinks />;
 };
 

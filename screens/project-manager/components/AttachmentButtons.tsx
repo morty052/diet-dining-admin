@@ -99,32 +99,39 @@ function DropDown({ type, setOpen, attachments }: DropDownProps) {
       style={{
         height: 200,
         width: 300,
-        backgroundColor: "rgb(151, 151, 151)",
+        // backgroundColor: "rgb(151, 151, 151)",
+        backgroundColor: Colors.darkGrey,
         position: "absolute",
         bottom: -210,
         left: 0,
         zIndex: 50,
-        borderRadius: 20,
-        paddingVertical: 10,
-        paddingHorizontal: 14,
       }}
     >
       <View
         style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "center",
-          width: "100%",
+          borderRadius: 10,
+          paddingVertical: 10,
+          paddingHorizontal: 14,
+          backgroundColor: Colors.lightBlack,
         }}
       >
-        <Text style={{ textTransform: "capitalize", color: "white" }}>
-          {type.toLowerCase()}
-        </Text>
-        <Pressable onPress={() => setOpen(false)}>
-          <Ionicons color={"white"} size={30} name="close-circle" />
-        </Pressable>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+            width: "100%",
+          }}
+        >
+          <Text style={{ textTransform: "capitalize", color: "white" }}>
+            {type.toLowerCase()}
+          </Text>
+          <Pressable onPress={() => setOpen(false)}>
+            <Ionicons color={"white"} size={30} name="close-circle" />
+          </Pressable>
+        </View>
+        {DropDownTypes[type]}
       </View>
-      {DropDownTypes[type]}
     </Animated.View>
   );
 }

@@ -9,6 +9,7 @@ import {
   TextInput,
   Image,
   Pressable,
+  ScrollView,
 } from "react-native";
 import { ControlButtons } from "../../components";
 import { SEMI_BOLD } from "../../constants/fontNames";
@@ -170,13 +171,15 @@ function AddTaskMembers({ navigation }: any) {
             />
           ))}
         </View>
-        {queryResults?.map((admin: memberProps) => (
-          <AdminCard
-            onSelect={(admin) => handleSelect(admin)}
-            admin={admin}
-            key={admin._id}
-          />
-        ))}
+        <ScrollView contentContainerStyle={{ gap: 10 }}>
+          {queryResults?.map((admin: memberProps) => (
+            <AdminCard
+              onSelect={(admin) => handleSelect(admin)}
+              admin={admin}
+              key={admin._id}
+            />
+          ))}
+        </ScrollView>
       </View>
       <ControlButtons handlePress={handleContinue} />
     </View>

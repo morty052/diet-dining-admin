@@ -199,46 +199,6 @@ const MemberModal = ({
                 </Text>
               </View>
             </View>
-            <View
-              style={{
-                backgroundColor: Colors.lightBlack,
-                paddingHorizontal: 10,
-                paddingVertical: 20,
-                borderRadius: 15,
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "space-between",
-                position: "relative",
-              }}
-            >
-              <Text
-                style={{
-                  color: Colors.light,
-                  fontFamily: SEMI_BOLD,
-                  fontSize: 14,
-                }}
-              >
-                Started Task: Select Processor
-              </Text>
-
-              <View
-                style={{
-                  position: "absolute",
-                  right: 10,
-                  bottom: 5,
-                }}
-              >
-                <Text
-                  style={{
-                    color: Colors.light,
-                    fontFamily: SEMI_BOLD,
-                    fontSize: 12,
-                  }}
-                >
-                  11:45am
-                </Text>
-              </View>
-            </View>
           </View>
         </View>
       </SafeAreaView>

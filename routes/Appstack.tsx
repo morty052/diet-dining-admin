@@ -28,6 +28,7 @@ import { ConfirmOtpScreen } from "../screens/onboarding-screens/ConfirmOtpScreen
 import SettingsButton from "../components/ui/SettingsButton";
 import ProjectManagerStack from "./ProjectManagerStack";
 import DriverStack from "./DriverStack";
+import Avatar from "../components/avatar";
 
 type rootStackParams = {
   Home: undefined;
@@ -124,6 +125,7 @@ const Appstack = ({
       <Stack.Screen
         options={{
           // header: () => <NavBar minimal />,
+          headerLeft: () => <Avatar />,
           title: "Quick links",
           headerTitleStyle: { color: "white" },
           headerBackVisible: false,

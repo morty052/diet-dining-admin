@@ -6,4 +6,10 @@ export type memberProps = {
   expo_push_token: string;
   admin_role: string;
   _id: string;
+  task_status: {
+    completed_task?: boolean;
+    pending_task?: boolean;
+    started_task?: boolean;
+  };
+  remarks?: string;
 };

@@ -75,6 +75,30 @@ const TaskScreen = ({ route }: any) => {
     return;
   };
 
+  const currentAdmin = React.useMemo(() => {
+    const admin_id = getItem("admin_id");
+    const admin = members.find((member) => member._id == admin_id);
+
+    return admin;
+  }, []);
+
+  const remarksArray = React.useMemo(() => {
+    const remarksPlaceholder = [];
+    for (const member in members) {
+      if (!members[member].remarks) {
+        continue;
+      }
+      remarksPlaceholder.push({
+        remark: members[member].remarks,
+        member: members[member],
+      });
+    }
+
+    return remarksPlaceholder;
+  }, [members]);
+
+  console.log(JSON.stringify(currentAdmin, null, 2));
+
   return (
     <ScrollView
       keyboardDismissMode="on-drag"
@@ -89,63 +113,69 @@ const TaskScreen = ({ route }: any) => {
       <AttachmentButtons attachments={attachments} />
       {type == "POLL" && <SuggestionsGrid />}
       {type == "REVIEW" && (
-        <ReviewSection remark={remark} setRemark={setRemark} />
-      )}
-      <View style={{ gap: 20, paddingTop: 10, zIndex: 1 }}>
-        <ReminderButton
-          title={name}
-          notes={description}
-          startDate={new Date()}
+        <ReviewSection
+          remarksArray={remarksArray}
+          remark={remark}
+          setRemark={setRemark}
         />
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <Text
+      )}
+      {!currentAdmin?.task_status.completed_task && (
+        <View style={{ gap: 20, paddingTop: 10, zIndex: 1 }}>
+          <ReminderButton
+            title={name}
+            notes={description}
+            startDate={new Date()}
+          />
+          <View
             style={{
-              color: "#f5dd4b",
-              fontFamily: SEMI_BOLD,
-              fontSize: 20,
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
             }}
           >
-            Mark as started
-          </Text>
-          <Switch
-            trackColor={{ false: "#767577", true: "#81b0ff" }}
-            thumbColor={isStarted ? "#f5dd4b" : "#f4f3f4"}
-            ios_backgroundColor="#3e3e3e"
-            onValueChange={toggleStarted}
-            value={isStarted}
-          />
-        </View>
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <Text
+            <Text
+              style={{
+                color: "#f5dd4b",
+                fontFamily: SEMI_BOLD,
+                fontSize: 20,
+              }}
+            >
+              Mark as started
+            </Text>
+            <Switch
+              trackColor={{ false: "#767577", true: "#81b0ff" }}
+              thumbColor={isStarted ? "#f5dd4b" : "#f4f3f4"}
+              ios_backgroundColor="#3e3e3e"
+              onValueChange={toggleStarted}
+              value={isStarted}
+            />
+          </View>
+          <View
             style={{
-              color: Colors.primary,
-              fontFamily: SEMI_BOLD,
-              fontSize: 20,
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
             }}
           >
-            Mark as completed
-          </Text>
-          <Switch
-            trackColor={{ false: "#767577", true: Colors.primary }}
-            thumbColor={isCompleted ? "white" : "#f4f3f4"}
-            //   ios_backgroundColor="#3e3e3e"
-            onValueChange={(value) => toggleComplete(value)}
-            value={isCompleted}
-          />
+            <Text
+              style={{
+                color: Colors.primary,
+                fontFamily: SEMI_BOLD,
+                fontSize: 20,
+              }}
+            >
+              Mark as completed
+            </Text>
+            <Switch
+              trackColor={{ false: "#767577", true: Colors.primary }}
+              thumbColor={isCompleted ? "white" : "#f4f3f4"}
+              //   ios_backgroundColor="#3e3e3e"
+              onValueChange={(value) => toggleComplete(value)}
+              value={isCompleted}
+            />
+          </View>
         </View>
-      </View>
+      )}
     </ScrollView>
   );
 };

@@ -50,44 +50,20 @@ export const SettingsScreen = ({ navigation }: { navigation: any }) => {
 
   return (
     <Screen>
-      <Pressable
-        onPress={handleSignOut}
-        style={{
-          height: 40,
-          backgroundColor: "red",
-          alignItems: "center",
-          justifyContent: "center",
-          borderRadius: 10,
-        }}
-      >
-        <Text style={{ color: "white" }}>Sign out</Text>
-      </Pressable>
-      <Pressable
-        onPress={() => navigation.navigate("ProjectManagerStack")}
-        style={{
-          height: 40,
-          backgroundColor: "red",
-          alignItems: "center",
-          justifyContent: "center",
-          borderRadius: 10,
-          marginTop: 20,
-        }}
-      >
-        <Text style={{ color: "white" }}>Go to taskmanager</Text>
-      </Pressable>
-      <Pressable
-        onPress={() => navigation.navigate("CreateProject")}
-        style={{
-          height: 40,
-          backgroundColor: "red",
-          alignItems: "center",
-          justifyContent: "center",
-          borderRadius: 10,
-          marginTop: 20,
-        }}
-      >
-        <Text style={{ color: "white" }}>Go to create</Text>
-      </Pressable>
+      <View style={{ paddingTop: 20 }}>
+        <Pressable
+          onPress={handleSignOut}
+          style={{
+            height: 40,
+            backgroundColor: "red",
+            alignItems: "center",
+            justifyContent: "center",
+            borderRadius: 10,
+          }}
+        >
+          <Text style={{ color: "white" }}>Sign out</Text>
+        </Pressable>
+      </View>
     </Screen>
   );
 };

@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Text,
   View,
+  Image,
 } from "react-native";
 import React from "react";
 import Colors from "../../../constants/colors";
@@ -15,7 +16,10 @@ import { TextInput } from "react-native-gesture-handler";
 import { Ionicons } from "@expo/vector-icons";
 import { memberProps } from "../../../types/MemberProps";
 
-type Props = {};
+type RemarkProps = {
+  remark: string | undefined;
+  member: memberProps;
+};
 
 const feebacksArray = [
   {
@@ -88,8 +92,8 @@ const RemarkItem = ({
   remark,
   handleOpenRemark,
 }: {
-  remark: string;
-  handleOpenRemark: (remark: string) => void;
+  remark: RemarkProps;
+  handleOpenRemark: (remark: RemarkProps) => void;
 }) => {
   return (
     <Pressable
@@ -113,19 +117,17 @@ const RemarkModal = ({
   isOpen,
   handleClose,
   remark,
-  member,
 }: {
   isOpen: boolean;
   handleClose: () => void;
-  remark: string;
-  member: memberProps;
+  remark: RemarkProps | null;
 }) => {
   return (
     <Modal animationType="slide" transparent visible={isOpen}>
       <View
         style={{
           flex: 1,
-          backgroundColor: "rgba(255,255,255,0.8)",
+          backgroundColor: Colors.lightBlack,
           justifyContent: "flex-end",
         }}
       >
@@ -149,7 +151,8 @@ const RemarkModal = ({
             }}
           >
             <View style={{ flexDirection: "row", gap: 10 }}>
-              <View
+              <Image
+                source={{ uri: remark?.member.admin_avatar }}
                 style={{
                   height: 50,
                   width: 50,
@@ -157,7 +160,7 @@ const RemarkModal = ({
                   borderWidth: 1,
                   borderColor: Colors.light,
                 }}
-              ></View>
+              />
               <View>
                 <Text
                   style={{
@@ -166,7 +169,7 @@ const RemarkModal = ({
                     color: Colors.light,
                   }}
                 >
-                  Muyiwa Makinde
+                  {remark?.member.admin_firstname}
                 </Text>
                 <Text
                   style={{
@@ -175,7 +178,7 @@ const RemarkModal = ({
                     color: Colors.light,
                   }}
                 >
-                  CFO
+                  {remark?.member.admin_role}
                 </Text>
               </View>
             </View>
@@ -187,9 +190,11 @@ const RemarkModal = ({
             />
           </View>
           <View style={{ paddingHorizontal: 10, gap: 10 }}>
-            <Text style={styles.titleText}>Remark</Text>
+            <Text style={styles.titleText}>
+              {remark?.member.admin_firstname} remarked
+            </Text>
             <View style={styles.remarkContainer}>
-              <Text style={{ color: Colors.light }}>{remark}</Text>
+              <Text style={{ color: Colors.light }}>{remark?.remark}</Text>
             </View>
           </View>
         </View>
@@ -201,24 +206,22 @@ const RemarkModal = ({
 const ReviewSection = ({
   remark,
   setRemark,
+  remarksArray,
 }: {
   remark: string;
   setRemark: React.Dispatch<React.SetStateAction<string>>;
+  remarksArray: RemarkProps[];
 }) => {
-  const [remarksArray, setRemarksArray] = React.useState<string[]>([]);
-  const [remarksModalOpen, setRemarksModalOpen] = React.useState(true);
-  const [activeRemark, setActiveRemark] = React.useState("");
-
-  const addRemark = () => {
-    setRemarksArray((prev) => [...prev, remark]);
-    setRemark("");
-  };
+  const [remarksModalOpen, setRemarksModalOpen] = React.useState(false);
+  const [activeRemark, setActiveRemark] = React.useState<null | RemarkProps>(
+    null
+  );
 
   const closeRemarkModal = () => {
     setRemarksModalOpen(false);
   };
 
-  const handleOpenRemark = (remark: string) => {
+  const handleOpenRemark = (remark: RemarkProps) => {
     setActiveRemark(remark);
     setRemarksModalOpen(true);
   };
@@ -226,15 +229,15 @@ const ReviewSection = ({
   return (
     <KeyboardAvoidingView style={styles.container}>
       <Text style={styles.titleText}>Remarks</Text>
-      {/* <ScrollView contentContainerStyle={{ gap: 10 }} horizontal>
-        {remarksArray.map((remark, index) => (
+      <ScrollView contentContainerStyle={{ gap: 10 }} horizontal>
+        {remarksArray?.map((remark, index) => (
           <RemarkItem
             key={index}
             remark={remark}
             handleOpenRemark={(remark) => handleOpenRemark(remark)}
           />
         ))}
-      </ScrollView> */}
+      </ScrollView>
       <KeyboardAvoidingView
         behavior={Platform.OS == "ios" ? "padding" : "height"}
       >
@@ -269,11 +272,11 @@ const ReviewSection = ({
           />
         ))}
       </ScrollView> */}
-      {/* <RemarkModal
+      <RemarkModal
         isOpen={remarksModalOpen}
         handleClose={closeRemarkModal}
         remark={activeRemark}
-      /> */}
+      />
     </KeyboardAvoidingView>
   );
 };
