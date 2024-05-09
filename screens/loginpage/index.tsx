@@ -31,23 +31,6 @@ export const LoginPage = ({ navigation }: any) => {
       return;
     }
 
-    if (isAdmin) {
-      try {
-        await signIn.create({
-          strategy: "email_code",
-          identifier: emailAddress,
-        });
-        setEmail("");
-        setPassword("");
-        return navigation.navigate("OtpScreen", {
-          emailAddress: email,
-          isAdmin: true,
-        });
-      } catch (error) {
-        console.error({ error });
-      }
-    }
-
     try {
       await signIn.create({
         strategy: "email_code",
@@ -55,8 +38,9 @@ export const LoginPage = ({ navigation }: any) => {
       });
       setEmail("");
       setPassword("");
-      navigation.navigate("OtpScreen", {
-        emailAddress,
+      return navigation.navigate("OtpScreen", {
+        emailAddress: email,
+        isAdmin: true,
       });
     } catch (error) {
       console.error({ error });
